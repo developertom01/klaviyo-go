@@ -53,7 +53,7 @@ type (
 
 	AccountsApi interface {
 		//Retrieve the account(s) associated with a given private API key.
-		GetAccount(ctx context.Context) (*AccountResponse, error)
+		GetAccounts(ctx context.Context) (*AccountResponse, error)
 	}
 
 	accountApi struct {
@@ -81,7 +81,7 @@ func NewAccountsApi(session session.Session, httpClient common.HTTPClient) Accou
 	}
 }
 
-func (api *accountApi) GetAccount(ctx context.Context) (*AccountResponse, error) {
+func (api *accountApi) GetAccounts(ctx context.Context) (*AccountResponse, error) {
 	var res *http.Response
 
 	reqFn := func() error {

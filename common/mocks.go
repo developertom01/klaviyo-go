@@ -1,6 +1,8 @@
 package common
 
 import (
+	"strconv"
+
 	"github.com/developertom01/klaviyo-go/exceptions"
 	"github.com/jaswdr/faker/v2"
 )
@@ -10,7 +12,7 @@ func MockedErrorResponse() exceptions.ApiErrorResponse {
 
 	error := exceptions.ApiError{
 		Id:     fake.UUID().V4(),
-		Code:   string(fake.Int()),
+		Code:   strconv.FormatInt(int64(fake.Internet().StatusCode()), 10),
 		Title:  fake.Lorem().Sentence(5),
 		Detail: fake.Lorem().Sentence(10),
 	}

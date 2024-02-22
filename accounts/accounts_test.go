@@ -28,7 +28,7 @@ func (suit *AccountsApiTestSuite) SetupTest() {
 	suit.api = NewAccountsApi(session, suit.mockedClient)
 }
 
-func (suit *AccountsApiTestSuite) TestGetAccountBadRequest() {
+func (suit *AccountsApiTestSuite) TestGetAccountsBadRequest() {
 	//Mock response of API call to return 400 error
 	errBody := common.MockedErrorResponse()
 	errByte, err := json.Marshal(errBody)
@@ -42,12 +42,12 @@ func (suit *AccountsApiTestSuite) TestGetAccountBadRequest() {
 		Body:       buff,
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-	_, err = suit.api.GetAccount(context.Background())
+	_, err = suit.api.GetAccounts(context.Background())
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
-func (suit *AccountsApiTestSuite) TestGetAccountServerError() {
+func (suit *AccountsApiTestSuite) TestGetAccountsServerError() {
 	//Mock response of API call to return 500 error
 	errBody := common.MockedErrorResponse()
 	errByte, err := json.Marshal(errBody)
@@ -62,12 +62,12 @@ func (suit *AccountsApiTestSuite) TestGetAccountServerError() {
 		Body:       buff,
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-	_, err = suit.api.GetAccount(context.Background())
+	_, err = suit.api.GetAccounts(context.Background())
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
-func (suit *AccountsApiTestSuite) TestGetAccountOkResponse() {
+func (suit *AccountsApiTestSuite) TestGetAccountsOkResponse() {
 	//Mock response of API call to return 200 error
 	mockedAccount := mockedAccountResponse(1)
 	responseByte, err := json.Marshal(mockedAccount)
@@ -83,7 +83,7 @@ func (suit *AccountsApiTestSuite) TestGetAccountOkResponse() {
 	}
 
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-	accountResp, err := suit.api.GetAccount(context.Background())
+	accountResp, err := suit.api.GetAccounts(context.Background())
 
 	suit.Nil(err)
 	suit.Equal(mockedAccount.Data[0].ID, accountResp.Data[0].ID)
