@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -44,6 +45,7 @@ type (
 		Attributes Attributes   `json:"attributes"`
 		Links      common.Links `json:"links"`
 	}
+
 	AccountResponse struct {
 		Data  []Account    `json:"data"`
 		Links common.Links `json:"links"`
@@ -58,15 +60,24 @@ type (
 		session    session.Session
 		baseApiUrl string
 		revision   string
+
+		httpClient common.HTTPClient
 	}
 )
 
-func NewAccountsApi(session session.Session) AccountsApi {
+func NewAccountsApi(session session.Session, httpClient common.HTTPClient) AccountsApi {
 
+	var client common.HTTPClient
+	if httpClient == nil {
+		client = http.DefaultClient
+	} else {
+		client = httpClient
+	}
 	return &accountApi{
 		session:    session,
 		baseApiUrl: "https://a.klaviyo.com/api/accounts",
 		revision:   "2024-02-15",
+		httpClient: client,
 	}
 }
 
@@ -82,7 +93,7 @@ func (api *accountApi) GetAccount(ctx context.Context) (*AccountResponse, error)
 		req.Header.Add("revision", api.revision)
 		req.Header.Add("accept", "application/json")
 
-		res, err = http.DefaultClient.Do(req)
+		res, err = api.httpClient.Do(req)
 		if err != nil {
 			return err
 		}
@@ -91,6 +102,7 @@ func (api *accountApi) GetAccount(ctx context.Context) (*AccountResponse, error)
 	}
 
 	err := common.Retry(api.session.GetRetryOptions(), reqFn)
+
 	if err != nil {
 		return nil, errors.Join(getAccountApiCallError, err)
 	}
@@ -104,6 +116,7 @@ func (api *accountApi) GetAccount(ctx context.Context) (*AccountResponse, error)
 		var errorRes exceptions.ApiErrorResponse
 
 		err = json.Unmarshal(byteData, &errorRes)
+		fmt.Println("Target error:", err)
 		if err != nil {
 			return nil, errors.Join(serializationError, err)
 		}

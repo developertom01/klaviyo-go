@@ -16,6 +16,6 @@ func NewKlaviyoApi(apiKey string, retryOption *common.RetryOptions) *KlaviyoApi 
 	session := session.NewApiKeySession(apiKey, retryOption)
 
 	return &KlaviyoApi{
-		Accounts: accounts.NewAccountsApi(session),
+		Accounts: accounts.NewAccountsApi(session, nil),
 	}
 }

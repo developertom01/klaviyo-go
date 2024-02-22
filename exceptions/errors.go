@@ -15,7 +15,7 @@ type (
 	}
 
 	ApiErrorResponse struct {
-		errors []ApiError
+		Errors []ApiError `json:"errors"`
 	}
 )
 

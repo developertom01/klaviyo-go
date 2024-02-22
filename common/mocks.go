@@ -1,0 +1,40 @@
+package common
+
+import (
+	"github.com/developertom01/klaviyo-go/exceptions"
+	"github.com/jaswdr/faker/v2"
+)
+
+func MockedErrorResponse() exceptions.ApiErrorResponse {
+	fake := faker.New()
+
+	error := exceptions.ApiError{
+		Id:     fake.UUID().V4(),
+		Code:   string(fake.Int()),
+		Title:  fake.Lorem().Sentence(5),
+		Detail: fake.Lorem().Sentence(10),
+	}
+	return exceptions.ApiErrorResponse{
+		Errors: []exceptions.ApiError{error},
+	}
+
+}
+
+func MockedLinkResponse() Links {
+	fake := faker.New()
+
+	self := fake.Internet().URL()
+	first := fake.Internet().URL()
+	last := fake.Internet().URL()
+	previous := fake.Internet().URL()
+	next := fake.Internet().URL()
+
+	return Links{
+		Self:     &self,
+		First:    &first,
+		Last:     &last,
+		Previous: &previous,
+		Next:     &next,
+	}
+
+}
