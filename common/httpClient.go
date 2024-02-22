@@ -1,7 +1,10 @@
 package common
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -24,4 +27,24 @@ func (m *MockHTTPClient) Do(req *http.Request) (*http.Response, error) {
 
 func NewMockHTTPClient() *MockHTTPClient {
 	return &MockHTTPClient{}
+}
+
+func BuildURLWithQueryParams(baseUrl string, queryParams map[string][]string) (string, error) {
+	params := url.Values{}
+	for key, val := range queryParams {
+		if val != nil && len(val) > 0 {
+			fieldsStr := strings.Join(val, ",")
+			params.Set(key, fieldsStr)
+		}
+
+	}
+
+	apiUrl, err := url.Parse(fmt.Sprintf("%s/?%s", baseUrl, params.Encode()))
+
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(apiUrl)
+
+	return apiUrl.String(), nil
 }

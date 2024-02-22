@@ -16,8 +16,8 @@ type ApiKeySession struct {
 	retryOpt common.RetryOptions
 }
 
-func NewApiKeySession(apiKey string, rOpt *common.RetryOptions) Session {
-	options := options.NewOptionsWithDefaultValues().WithApiKey(apiKey)
+func NewApiKeySession(opt options.Options, rOpt *common.RetryOptions) Session {
+	options := options.NewOptionsWithDefaultValues().WithApiKey(*opt.ApiKey())
 
 	var retryOptions *common.RetryOptions
 
@@ -44,4 +44,8 @@ func (s ApiKeySession) ApplyToRequest(option options.Options, req *http.Request)
 
 func (s ApiKeySession) GetRetryOptions() common.RetryOptions {
 	return s.retryOpt
+}
+
+func (s ApiKeySession) GetOptions() options.Options {
+	return s.opt
 }

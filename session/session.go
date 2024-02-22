@@ -11,4 +11,5 @@ type Session interface {
 	//Apply Api key header
 	ApplyToRequest(option options.Options, req *http.Request) error
 	GetRetryOptions() common.RetryOptions
+	GetOptions() options.Options
 }
