@@ -102,7 +102,6 @@ func (api *accountApi) GetAccount(ctx context.Context) (*AccountResponse, error)
 	}
 
 	err := common.Retry(api.session.GetRetryOptions(), reqFn)
-
 	if err != nil {
 		return nil, errors.Join(getAccountApiCallError, err)
 	}
