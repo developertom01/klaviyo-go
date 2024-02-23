@@ -7,6 +7,8 @@ import (
 
 type CampaignsField string
 
+type CampaignMessageField string
+
 const (
 	CampaignsFieldName                                                    CampaignsField = "name"
 	CampaignsFieldStatus                                                  CampaignsField = "status"
@@ -30,19 +32,52 @@ const (
 	CampaignsSendTime                                                     CampaignsField = "send_time"
 )
 
+const (
+	CampaignMessageFieldLabel                           CampaignMessageField = "label"
+	CampaignMessageFieldChannel                         CampaignMessageField = "channel"
+	CampaignMessageFieldContent                         CampaignMessageField = "content"
+	CampaignMessageFieldSendTimes                       CampaignMessageField = "send_times"
+	CampaignMessageFieldRenderOptions                   CampaignMessageField = "render_options"
+	CampaignMessageFieldRenderOptions_ShortenLinks      CampaignMessageField = "render_options.shorten_links"
+	CampaignMessageFieldRenderOptions_AddOrgPrefix      CampaignMessageField = "render_options.add_org_prefix"
+	CampaignMessageFieldRenderOptions_AddOrgLink        CampaignMessageField = "render_options.add_org_link"
+	CampaignMessageFieldRenderOptions_AddOptOutLanguage CampaignMessageField = "render_options.add_opt_out_language"
+	CampaignMessageFieldCreatedAt                       CampaignMessageField = "created_at"
+	CampaignMessageFieldUpdatedAt                       CampaignMessageField = "updated_at"
+)
+
 type CampaignsFieldParamBuilder struct {
 	params []CampaignsField
+}
+
+type CampaignMessageFieldParamBuilder struct {
+	params []CampaignMessageField
 }
 
 func NewCampaignsFieldParamBuilder() *CampaignsFieldParamBuilder {
 	return &CampaignsFieldParamBuilder{}
 }
 
+func NewCampaignMessageFieldParamBuilder() *CampaignMessageFieldParamBuilder {
+	return &CampaignMessageFieldParamBuilder{}
+}
+
 func (builder *CampaignsFieldParamBuilder) Add(field CampaignsField) *CampaignsFieldParamBuilder {
 	builder.params = append(builder.params, field)
+
 	return builder
 }
 
 func (builder *CampaignsFieldParamBuilder) Build() string {
 	return strings.ReplaceAll(fmt.Sprintf("fields[campaign]=%v", builder.params), " ", ",")
+}
+
+func (builder *CampaignMessageFieldParamBuilder) Add(field CampaignMessageField) *CampaignMessageFieldParamBuilder {
+	builder.params = append(builder.params, field)
+
+	return builder
+}
+
+func (builder *CampaignMessageFieldParamBuilder) Build() string {
+	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-message]=%v", builder.params), " ", ",")
 }

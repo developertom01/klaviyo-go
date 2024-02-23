@@ -10,7 +10,7 @@ import (
 
 type (
 	CampaignsApi interface {
-		GetCampaigns(ctx context.Context) models.CampaignMessage
+		GetCampaigns(ctx context.Context) (models.CampaignsResponse, error)
 	}
 
 	campaignsApi struct {
@@ -25,7 +25,7 @@ func NewCampaignsApi(session session.Session, httpClient common.HTTPClient) Camp
 	return &campaignsApi{}
 }
 
-func (*campaignsApi) GetCampaigns(ctx context.Context) models.CampaignMessage {
+func (*campaignsApi) GetCampaigns(ctx context.Context) (models.CampaignsResponse, error) {
 	panic("")
 }
 

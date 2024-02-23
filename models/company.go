@@ -10,6 +10,10 @@ type (
 		Links    common.Links       `json:"links"`
 		Included []CampaignIncluded `json:"included"`
 	}
+	CampaignsResponse struct {
+		Data     Campaign           `json:"data"`
+		Included []CampaignIncluded `json:"included"`
+	}
 
 	Campaign struct {
 		string        `json:"type"`
