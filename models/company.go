@@ -10,13 +10,21 @@ type (
 		Links    common.Links       `json:"links"`
 		Included []CampaignIncluded `json:"included"`
 	}
+	CampaignsResponse struct {
+		Data     Campaign           `json:"data"`
+		Included []CampaignIncluded `json:"included"`
+	}
 
 	Campaign struct {
 		string        `json:"type"`
-		ID            string             `json:"id"`
-		Attributes    CampaignAttributes `json:"attributes"`
-		Links         DataLinks          `json:"links"`
-		Relationships Relationships      `json:"relationships"`
+		ID            string                `json:"id"`
+		Attributes    CampaignAttributes    `json:"attributes"`
+		Links         DataLinks             `json:"links"`
+		Relationships *CampaignRelationship `json:"relationships,omitempty"`
+	}
+	CampaignRelationship struct {
+		CampaignMessage *Relationships `json:"campaign-messages,omitempty"`
+		Tags            *Relationships `json:"tags,omitempty"`
 	}
 
 	CampaignAttributes struct {

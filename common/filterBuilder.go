@@ -31,7 +31,7 @@ type FilterBuilder struct {
 	filters []string
 }
 
-func NewFilerBuilder() *FilterBuilder {
+func NewFilterBuilder() *FilterBuilder {
 	return &FilterBuilder{}
 }
 
