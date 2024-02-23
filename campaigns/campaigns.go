@@ -143,6 +143,7 @@ type (
 
 	CampaignsApi interface {
 	}
+
 	campaignsApi struct {
 		session    session.Session
 		baseApiUrl string
