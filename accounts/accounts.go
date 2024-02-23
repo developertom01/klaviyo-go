@@ -142,7 +142,10 @@ func (api *accountApi) executeRequest(req *http.Request) (*http.Response, error)
 	req.Header.Add("accept", "application/json")
 	api.session.ApplyToRequest(api.session.GetOptions(), req)
 
-	return api.httpClient.Do(req)
+	execFn := func() (*http.Response, error) {
+		return api.httpClient.Do(req)
+	}
+	return common.Retry(execFn, api.session.GetRetryOptions())
 }
 
 func (api *accountApi) retrieveData(req *http.Request) ([]byte, error) {

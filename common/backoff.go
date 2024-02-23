@@ -1,7 +1,9 @@
 package common
 
 import (
-	"fmt"
+	"log"
+	"net/http"
+	"slices"
 	"time"
 )
 
@@ -17,17 +19,36 @@ func NewRetryOptionsWithDefaultValues() *RetryOptions {
 	}
 }
 
-func Retry(options RetryOptions, fn func() error) error {
-	ticker := time.Tick(options.Interval)
-	var err error
-	for retries := 0; retries < options.MaxRetries; retries++ {
-		if err = fn(); err == nil {
-			return nil
-		}
-		fmt.Printf("Error occurred: %v. Retrying...\n", err)
-		<-ticker // Wait for the next tick
-	}
-	return err
-}
+type RetryableFunc func() (*http.Response, error)
 
-var retryStatusCode = []int{500, 400, 300}
+func Retry(fn RetryableFunc, opt RetryOptions) (*http.Response, error) {
+	var retryStatusCode = []int{http.StatusRequestTimeout, http.StatusInternalServerError, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout}
+
+	var resp *http.Response
+	var err error
+
+	for retries := 0; retries < opt.MaxRetries; retries++ {
+		// Execute the provided function
+		resp, err = fn()
+
+		// If successful, break the loop
+		if err == nil && resp.StatusCode == http.StatusOK {
+			break
+		}
+
+		if !slices.Contains(retryStatusCode, resp.StatusCode) {
+			break
+		}
+
+		// Log the error
+		log.Printf("Error making API call: %v\n", err)
+
+		// If not the last retry, wait before retrying
+		if retries < opt.MaxRetries-1 {
+			log.Printf("Retrying in %v seconds...\n", opt.Interval.Seconds())
+			time.Sleep(opt.Interval)
+		}
+	}
+
+	return resp, err
+}
