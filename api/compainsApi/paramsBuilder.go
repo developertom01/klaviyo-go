@@ -1,6 +1,9 @@
 package campaigns
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type CampaignsField string
 
@@ -41,5 +44,5 @@ func (builder *CampaignsFieldParamBuilder) Add(field CampaignsField) *CampaignsF
 }
 
 func (builder *CampaignsFieldParamBuilder) Build() string {
-	return fmt.Sprintf("fields[campaign]=%v", builder.params)
+	return strings.ReplaceAll(fmt.Sprintf("fields[campaign]=%v", builder.params), " ", ",")
 }
