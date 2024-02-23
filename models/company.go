@@ -17,10 +17,14 @@ type (
 
 	Campaign struct {
 		string        `json:"type"`
-		ID            string             `json:"id"`
-		Attributes    CampaignAttributes `json:"attributes"`
-		Links         DataLinks          `json:"links"`
-		Relationships Relationships      `json:"relationships"`
+		ID            string                `json:"id"`
+		Attributes    CampaignAttributes    `json:"attributes"`
+		Links         DataLinks             `json:"links"`
+		Relationships *CampaignRelationship `json:"relationships,omitempty"`
+	}
+	CampaignRelationship struct {
+		CampaignMessage *Relationships `json:"campaign-messages,omitempty"`
+		Tags            *Relationships `json:"tags,omitempty"`
 	}
 
 	CampaignAttributes struct {
