@@ -10,54 +10,14 @@ import (
 
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/exceptions"
+	"github.com/developertom01/klaviyo-go/models"
 	"github.com/developertom01/klaviyo-go/session"
 )
 
 type (
-	StreetAddress struct {
-		Address1 string `json:"address1"`
-		Address2 string `json:"address2"`
-		City     string `json:"city"`
-		Region   string `json:"region"`
-		Country  string `json:"country"`
-		Zip      string `json:"zip"`
-	}
-
-	AttributesContactInformation struct {
-		DefaultSenderName  string        `json:"default_sender_name"`
-		DefaultSenderEmail string        `json:"default_sender_email"`
-		WebsiteURL         string        `json:"website_url"`
-		OrganizationName   string        `json:"organization_name"`
-		StreetAddress      StreetAddress `json:"street_address"`
-	}
-
-	Attributes struct {
-		ContactInformation AttributesContactInformation `json:"contact_information"`
-		Industry           string                       `json:"industry"`
-		Timezone           string                       `json:"timezone"`
-		PreferredCurrency  string                       `json:"preferred_currency"`
-		PublicAPIKey       string                       `json:"public_api_key"`
-	}
-
-	Account struct {
-		Type       string       `json:"type"`
-		ID         string       `json:"id"`
-		Attributes Attributes   `json:"attributes"`
-		Links      common.Links `json:"links"`
-	}
-
-	AccountsCollectionResponse struct {
-		Data  []Account    `json:"data"`
-		Links common.Links `json:"links"`
-	}
-
-	AccountResponse struct {
-		Data Account `json:"data"`
-	}
-
 	AccountsApi interface {
-		GetAccounts(ctx context.Context, fields []AccountsField) (*AccountsCollectionResponse, error)
-		GetAccount(ctx context.Context, id string, fields []AccountsField) (*AccountResponse, error)
+		GetAccounts(ctx context.Context, fields []AccountsField) (*models.AccountsCollectionResponse, error)
+		GetAccount(ctx context.Context, id string, fields []AccountsField) (*models.AccountResponse, error)
 	}
 
 	accountApi struct {
@@ -83,7 +43,7 @@ func NewAccountsApi(session session.Session, httpClient common.HTTPClient) Accou
 	}
 }
 
-func (api *accountApi) getAccountsInternal(ctx context.Context, fields []AccountsField) (*AccountsCollectionResponse, error) {
+func (api *accountApi) getAccountsInternal(ctx context.Context, fields []AccountsField) (*models.AccountsCollectionResponse, error) {
 	queryParamMaps := map[string][]string{
 		"fields[account]": accountsFieldsToStrings(fields),
 	}
@@ -102,7 +62,7 @@ func (api *accountApi) getAccountsInternal(ctx context.Context, fields []Account
 		return nil, errors.Join(getAccountApiCallError, err)
 	}
 
-	var accountResp AccountsCollectionResponse
+	var accountResp models.AccountsCollectionResponse
 	err = json.Unmarshal(byteData, &accountResp)
 	if err != nil {
 		return nil, errors.Join(serializationError, err)
@@ -110,11 +70,11 @@ func (api *accountApi) getAccountsInternal(ctx context.Context, fields []Account
 	return &accountResp, nil
 }
 
-func (api *accountApi) GetAccounts(ctx context.Context, fields []AccountsField) (*AccountsCollectionResponse, error) {
+func (api *accountApi) GetAccounts(ctx context.Context, fields []AccountsField) (*models.AccountsCollectionResponse, error) {
 	return api.getAccountsInternal(ctx, fields)
 }
 
-func (api *accountApi) GetAccount(ctx context.Context, id string, fields []AccountsField) (*AccountResponse, error) {
+func (api *accountApi) GetAccount(ctx context.Context, id string, fields []AccountsField) (*models.AccountResponse, error) {
 	queryParamMaps := map[string][]string{
 		"fields[account]": accountsFieldsToStrings(fields),
 	}
@@ -132,7 +92,7 @@ func (api *accountApi) GetAccount(ctx context.Context, id string, fields []Accou
 		return nil, errors.Join(getAccountApiCallError, err)
 	}
 
-	var accountResp AccountResponse
+	var accountResp models.AccountResponse
 	err = json.Unmarshal(byteData, &accountResp)
 	return &accountResp, err
 }

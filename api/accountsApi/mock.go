@@ -2,27 +2,28 @@ package accounts
 
 import (
 	"github.com/developertom01/klaviyo-go/common"
+	"github.com/developertom01/klaviyo-go/models"
 	"github.com/jaswdr/faker"
 )
 
-func mockAccountsData() Account {
+func mockAccountsData() models.Account {
 	fake := faker.New()
 
-	return Account{
+	return models.Account{
 		Type:  fake.Lorem().Word(),
 		ID:    fake.UUID().V4(),
 		Links: common.MockedLinkResponse(),
-		Attributes: Attributes{
+		Attributes: models.AccountAttributes{
 			Industry:          fake.Lorem().Word(),
 			Timezone:          fake.Time().Timezone(),
 			PublicAPIKey:      fake.UUID().V4(),
 			PreferredCurrency: fake.Currency().Currency(),
-			ContactInformation: AttributesContactInformation{
+			ContactInformation: models.AccountAttributesContactInformation{
 				DefaultSenderName:  fake.Person().FirstName(),
 				DefaultSenderEmail: fake.Person().Contact().Email,
 				WebsiteURL:         fake.Internet().URL(),
 				OrganizationName:   fake.Company().Name(),
-				StreetAddress: StreetAddress{
+				StreetAddress: models.StreetAddress{
 					Address1: fake.Address().StreetAddress(),
 					Address2: fake.Address().StreetAddress(),
 					City:     fake.Address().City(),
@@ -35,23 +36,23 @@ func mockAccountsData() Account {
 	}
 }
 
-func mockedAccountsCollectionResponse(n int) AccountsCollectionResponse {
+func mockedAccountsCollectionResponse(n int) models.AccountsCollectionResponse {
 
-	accounts := make([]Account, 0)
+	accounts := make([]models.Account, 0)
 
 	for i := 0; i < n; i++ {
 		accounts = append(accounts, mockAccountsData())
 	}
 
-	return AccountsCollectionResponse{
+	return models.AccountsCollectionResponse{
 		Links: common.MockedLinkResponse(),
 		Data:  accounts,
 	}
 }
 
-func mockedAccountResponse() AccountResponse {
+func mockedAccountResponse() models.AccountResponse {
 
-	return AccountResponse{
+	return models.AccountResponse{
 		Data: mockAccountsData(),
 	}
 }
