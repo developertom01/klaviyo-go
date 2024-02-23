@@ -11,7 +11,6 @@ import (
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/exceptions"
 	"github.com/developertom01/klaviyo-go/options"
-	"github.com/developertom01/klaviyo-go/session"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -25,7 +24,7 @@ type AccountsApiTestSuite struct {
 func (suit *AccountsApiTestSuite) SetupTest() {
 	var apiKey = "test-key"
 	opt := options.NewOptionsWithDefaultValues().WithApiKey(apiKey)
-	session := session.NewApiKeySession(opt, common.NewRetryOptionsWithDefaultValues())
+	session := common.NewApiKeySession(opt, common.NewRetryOptionsWithDefaultValues())
 	suit.mockedClient = common.NewMockHTTPClient()
 	suit.api = NewAccountsApi(session, suit.mockedClient)
 }

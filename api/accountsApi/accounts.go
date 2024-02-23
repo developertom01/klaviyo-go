@@ -5,13 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/developertom01/klaviyo-go/common"
-	"github.com/developertom01/klaviyo-go/exceptions"
 	"github.com/developertom01/klaviyo-go/models"
-	"github.com/developertom01/klaviyo-go/session"
 )
 
 type (
@@ -21,14 +18,14 @@ type (
 	}
 
 	accountApi struct {
-		session    session.Session
+		session    common.Session
 		baseApiUrl string
 		revision   string
 		httpClient common.HTTPClient
 	}
 )
 
-func NewAccountsApi(session session.Session, httpClient common.HTTPClient) AccountsApi {
+func NewAccountsApi(session common.Session, httpClient common.HTTPClient) AccountsApi {
 	var client common.HTTPClient
 	if httpClient == nil {
 		client = http.DefaultClient
@@ -37,8 +34,8 @@ func NewAccountsApi(session session.Session, httpClient common.HTTPClient) Accou
 	}
 	return &accountApi{
 		session:    session,
-		baseApiUrl: "https://a.klaviyo.com/api/accounts",
-		revision:   "2024-02-15",
+		baseApiUrl: fmt.Sprintf("%s/api/campaigns", common.BASE_URL),
+		revision:   common.API_REVISION,
 		httpClient: client,
 	}
 }
@@ -57,7 +54,7 @@ func (api *accountApi) getAccountsInternal(ctx context.Context, fields []Account
 		return nil, err
 	}
 
-	byteData, err := api.retrieveData(req)
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
 		return nil, errors.Join(getAccountApiCallError, err)
 	}
@@ -87,42 +84,13 @@ func (api *accountApi) GetAccount(ctx context.Context, id string, fields []Accou
 		return nil, err
 	}
 
-	byteData, err := api.retrieveData(req)
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
 		return nil, errors.Join(getAccountApiCallError, err)
 	}
 
 	var accountResp models.AccountResponse
 	err = json.Unmarshal(byteData, &accountResp)
+	
 	return &accountResp, err
-}
-
-func (api *accountApi) executeRequest(req *http.Request) (*http.Response, error) {
-	req.Header.Add("revision", api.revision)
-	req.Header.Add("accept", "application/json")
-	api.session.ApplyToRequest(api.session.GetOptions(), req)
-
-	execFn := func() (*http.Response, error) {
-		return api.httpClient.Do(req)
-	}
-	return common.Retry(execFn, api.session.GetRetryOptions())
-}
-
-func (api *accountApi) retrieveData(req *http.Request) ([]byte, error) {
-	res, err := api.executeRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if !exceptions.IsHttpCodeOk(res.StatusCode) {
-		var errorRes exceptions.ApiErrorResponse
-		err := json.NewDecoder(res.Body).Decode(&errorRes)
-		if err != nil {
-			return nil, err
-		}
-		return nil, exceptions.NewResponseError(errorRes)
-	}
-
-	return io.ReadAll(res.Body)
 }

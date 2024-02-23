@@ -9,6 +9,8 @@ type CampaignsField string
 
 type CampaignMessageField string
 
+type CampaignSortField string
+
 const (
 	CampaignsFieldName                                                    CampaignsField = "name"
 	CampaignsFieldStatus                                                  CampaignsField = "status"
@@ -44,6 +46,23 @@ const (
 	CampaignMessageFieldRenderOptions_AddOptOutLanguage CampaignMessageField = "render_options.add_opt_out_language"
 	CampaignMessageFieldCreatedAt                       CampaignMessageField = "created_at"
 	CampaignMessageFieldUpdatedAt                       CampaignMessageField = "updated_at"
+)
+
+const (
+	CampaignSortFieldNameAsc  CampaignSortField = "name"
+	CampaignSortFieldNameDesc CampaignSortField = "-name"
+
+	CampaignSortFieldIdAsc  CampaignSortField = "id"
+	CampaignSortFieldIdDesc CampaignSortField = "-id"
+
+	CampaignSortFieldScheduledAtAsc  CampaignSortField = "scheduled_at"
+	CampaignSortFieldScheduledAtDesc CampaignSortField = "-scheduled_at"
+
+	CampaignSortFieldCreatedAtAsc  CampaignSortField = "created_at"
+	CampaignSortFieldCreatedAtDesc CampaignSortField = "-created_at"
+
+	CampaignSortFieldUpdatedAtAsc  CampaignSortField = "updated_at"
+	CampaignSortFieldUpdatedAtDesc CampaignSortField = "-updated_at"
 )
 
 type CampaignsFieldParamBuilder struct {
