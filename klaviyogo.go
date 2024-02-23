@@ -1,13 +1,11 @@
 package klaviyo
 
 import (
-	"github.com/developertom01/klaviyo-go/accounts"
+	accounts "github.com/developertom01/klaviyo-go/api/accountsApi"
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/options"
 	"github.com/developertom01/klaviyo-go/session"
 )
-
-type Auth interface{}
 
 type KlaviyoApi struct {
 	Accounts accounts.AccountsApi
