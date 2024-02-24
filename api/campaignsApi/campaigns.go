@@ -35,6 +35,9 @@ type (
 
 		//Clones an existing campaign, returning a new campaign based on the original with a new ID and name.
 		CreateCampaignClone(ctx context.Context, data CreateCampaignCloneRequestData) (*models.CampaignResponse, error)
+
+		//Return the related campaign
+		GetCampaignMessageCampaign(ctx context.Context, messageId string, fieldsParam *string) (*models.CampaignResponse, error)
 	}
 
 	campaignsApi struct {
@@ -188,11 +191,10 @@ func (api *campaignsApi) DeleteCampaigns(ctx context.Context, id string) error {
 }
 
 func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr *string) (*models.CampaignRecipientCountResponse, error) {
-	var fieldsParam = ""
 	if fieldsStr != nil {
-		fieldsParam = *fieldsStr
+		*fieldsStr = ""
 	}
-	url := fmt.Sprintf("%s/api/campaign-recipient-estimations/%s/?%s", api.baseApiUrl, id, fieldsParam)
+	url := fmt.Sprintf("%s/api/campaign-recipient-estimations/%s/?%s", api.baseApiUrl, id, *fieldsStr)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -210,7 +212,6 @@ func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id 
 	return &resp, err
 }
 
-// --Untested
 func (api *campaignsApi) CreateCampaignClone(ctx context.Context, data CreateCampaignCloneRequestData) (*models.CampaignResponse, error) {
 	url := fmt.Sprintf("%s/api/campaign-clone/", api.baseApiUrl)
 
@@ -237,8 +238,12 @@ func (api *campaignsApi) CreateCampaignClone(ctx context.Context, data CreateCam
 	return &resp, err
 }
 
-func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, messageId string, fieldsParam string) (*models.CampaignResponse, error) {
-	url := fmt.Sprintf("%s/api/campaign-messages/%s/campaign/?%s", api.baseApiUrl, messageId, fieldsParam)
+func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, messageId string, fieldsParam *string) (*models.CampaignResponse, error) {
+	if fieldsParam == nil {
+		*fieldsParam = ""
+	}
+
+	url := fmt.Sprintf("%s/api/campaign-messages/%s/campaign/?%s", api.baseApiUrl, messageId, *fieldsParam)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {

@@ -281,6 +281,7 @@ func (suit *CampaignsApiTestSuite) TestUpdateCampaignsOKRequest() {
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
 
+// Test for GetCampaignRecipientEstimation if it returns 5xx code
 func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationServerError() {
 	var campaignId = "123232"
 	mockedRespData := common.MockedErrorResponse()
@@ -302,6 +303,7 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationServerError
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
+// Test for GetCampaignRecipientEstimation if it returns 4xx code
 func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationBadRequest() {
 	var campaignId = "123232"
 	mockedRespData := common.MockedErrorResponse()
@@ -323,6 +325,7 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationBadRequest(
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
+// Test for GetCampaignRecipientEstimation if it returns 2xx code
 func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationOkStatus() {
 	var campaignId = "test-campaign-1"
 	mockedRespData := mockCampaignResponse()
@@ -340,6 +343,148 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationOkStatus() 
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	res, err := suit.api.GetCampaignRecipientEstimation(context.Background(), campaignId, nil)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
+// Test for CreateCampaignClone if it returns 5xx code
+func (suit *CampaignsApiTestSuite) TestCreateCampaignCloneServerError() {
+	reqData := mockCreateCampaignCloneRequestDataRequestData()
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 Server error",
+		StatusCode: http.StatusInternalServerError,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.CreateCampaignClone(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+// Test for CreateCampaignClone if it returns 4xx code
+func (suit *CampaignsApiTestSuite) TestCreateCampaignCloneBadRequest() {
+	reqData := mockCreateCampaignCloneRequestDataRequestData()
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 Server error",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.CreateCampaignClone(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+// Test for CreateCampaignClone if it returns 201
+func (suit *CampaignsApiTestSuite) TestCreateCampaignCloneOKRequest() {
+	reqData := mockCreateCampaignCloneRequestDataRequestData()
+	mockedRespData := mockCampaignResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "201 Created",
+		StatusCode: http.StatusCreated,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	res, err := suit.api.CreateCampaignClone(context.Background(), reqData)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
+// Test for CreateCampaignClone if it returns 4xx code
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignBadRequest() {
+	var messageId = "message-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 Bad request",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	pb := NewCampaignsFieldParamBuilder().Add(CampaignsCreatedAt).Add(CampaignsFieldArchived)
+	fieldsParam := pb.Build()
+	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, &fieldsParam)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+// Test for CreateCampaignClone if it returns 5xx code
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignServerError() {
+	var messageId = "message-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 Internal Server Error",
+		StatusCode: http.StatusInternalServerError,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	pb := NewCampaignsFieldParamBuilder().Add(CampaignsCreatedAt).Add(CampaignsFieldArchived)
+	fieldsParam := pb.Build()
+	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, &fieldsParam)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+// Test for CreateCampaignClone if it returns 2xx code
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignStatusOk() {
+	var messageId = "message-id"
+	mockedRespData := mockCampaignResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "201 Created",
+		StatusCode: http.StatusCreated,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	pb := NewCampaignsFieldParamBuilder().Add(CampaignsCreatedAt).Add(CampaignsFieldArchived)
+	fieldsParam := pb.Build()
+	res, err := suit.api.GetCampaignMessageCampaign(context.Background(), messageId, &fieldsParam)
 
 	suit.Nil(err)
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)

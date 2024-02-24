@@ -159,3 +159,17 @@ func mockUpdateCampaignRequestData() UpdateCampaignRequestData {
 		},
 	}
 }
+
+func mockCreateCampaignCloneRequestDataRequestData() CreateCampaignCloneRequestData {
+	fake := faker.New()
+
+	return CreateCampaignCloneRequestData{
+		Data: CreateCampaignCloneData{
+			Type: "campaign",
+			ID:   fake.UUID().V4(),
+			Attributes: CreateCampaignCloneRequestAttributes{
+				NewName: fake.Company().Name(),
+			},
+		},
+	}
+}
