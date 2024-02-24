@@ -191,10 +191,11 @@ func (api *campaignsApi) DeleteCampaigns(ctx context.Context, id string) error {
 }
 
 func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr *string) (*models.CampaignRecipientCountResponse, error) {
+	var fieldsParam = ""
 	if fieldsStr != nil {
-		*fieldsStr = ""
+		fieldsParam = *fieldsStr
 	}
-	url := fmt.Sprintf("%s/api/campaign-recipient-estimations/%s/?%s", api.baseApiUrl, id, *fieldsStr)
+	url := fmt.Sprintf("%s/api/campaign-recipient-estimations/%s/?%s", api.baseApiUrl, id, fieldsParam)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -239,11 +240,12 @@ func (api *campaignsApi) CreateCampaignClone(ctx context.Context, data CreateCam
 }
 
 func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, messageId string, fieldsParam *string) (*models.CampaignResponse, error) {
-	if fieldsParam == nil {
-		*fieldsParam = ""
-	}
 
-	url := fmt.Sprintf("%s/api/campaign-messages/%s/campaign/?%s", api.baseApiUrl, messageId, *fieldsParam)
+	var params = ""
+	if fieldsParam == nil {
+		params = *fieldsParam
+	}
+	url := fmt.Sprintf("%s/api/campaign-messages/%s/campaign/?%s", api.baseApiUrl, messageId, params)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
