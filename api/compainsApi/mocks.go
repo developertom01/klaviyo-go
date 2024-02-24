@@ -3,7 +3,6 @@ package campaigns
 import (
 	"time"
 
-	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/models"
 	"github.com/jaswdr/faker"
 )
@@ -88,12 +87,12 @@ func mockCampaignCollectionResponse(n int) models.CampaignsCollectionResponse {
 	}
 	return models.CampaignsCollectionResponse{
 		Data:  campaigns,
-		Links: common.MockedLinkResponse(),
+		Links: models.MockedLinkResponse(),
 	}
 }
 
-func mockCampaignResponse() models.CampaignsResponse {
-	return models.CampaignsResponse{
+func mockCampaignResponse() models.CampaignResponse {
+	return models.CampaignResponse{
 		Data: mockCampaignsData(),
 	}
 }

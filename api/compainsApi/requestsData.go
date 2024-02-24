@@ -118,3 +118,20 @@ type UtmParam struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
+
+type (
+	//Clones a campaign from an existing campaign
+	CreateCampaignCloneRequestData struct {
+		Data CreateCampaignCloneData `json:"data"`
+	}
+
+	CreateCampaignCloneData struct {
+		Type       string                               `json:"type"` //Campaign
+		Attributes CreateCampaignCloneRequestAttributes `json:"attributes"`
+		ID         string                               `json:"id"` //The campaign ID to be cloned
+	}
+
+	CreateCampaignCloneRequestAttributes struct {
+		NewName string `json:"new_name"` //The name for the new cloned campaign
+	}
+)

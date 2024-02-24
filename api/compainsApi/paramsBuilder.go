@@ -2,6 +2,7 @@ package campaigns
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -10,6 +11,8 @@ type CampaignsField string
 type CampaignMessageField string
 
 type CampaignSortField string
+
+type CampaignRecipientEstimationField string
 
 const (
 	CampaignsFieldName                                                    CampaignsField = "name"
@@ -65,6 +68,10 @@ const (
 	CampaignSortFieldUpdatedAtDesc CampaignSortField = "-updated_at"
 )
 
+const (
+	CampaignRecipientEstimationFieldEstimatedRecipientCount CampaignRecipientEstimationField = "estimated_recipient_count"
+)
+
 type CampaignsFieldParamBuilder struct {
 	params []CampaignsField
 }
@@ -73,30 +80,65 @@ type CampaignMessageFieldParamBuilder struct {
 	params []CampaignMessageField
 }
 
+type CampaignRecipientEstimationFieldParamBuilder struct {
+	params []CampaignRecipientEstimationField
+}
+
+func NewCampaignRecipientEstimationFieldParamBuilder() *CampaignRecipientEstimationFieldParamBuilder {
+	return &CampaignRecipientEstimationFieldParamBuilder{}
+}
+
 func NewCampaignsFieldParamBuilder() *CampaignsFieldParamBuilder {
 	return &CampaignsFieldParamBuilder{}
 }
-
 func NewCampaignMessageFieldParamBuilder() *CampaignMessageFieldParamBuilder {
 	return &CampaignMessageFieldParamBuilder{}
 }
 
 func (builder *CampaignsFieldParamBuilder) Add(field CampaignsField) *CampaignsFieldParamBuilder {
-	builder.params = append(builder.params, field)
+	if !slices.Contains(builder.params, field) {
+		builder.params = append(builder.params, field)
+	}
+
+	return builder
+}
+
+func (builder *CampaignRecipientEstimationFieldParamBuilder) Add(field CampaignRecipientEstimationField) *CampaignRecipientEstimationFieldParamBuilder {
+	if !slices.Contains(builder.params, field) {
+		builder.params = append(builder.params, field)
+	}
+
+	return builder
+}
+
+func (builder *CampaignMessageFieldParamBuilder) Add(field CampaignMessageField) *CampaignMessageFieldParamBuilder {
+	if !slices.Contains(builder.params, field) {
+		builder.params = append(builder.params, field)
+	}
 
 	return builder
 }
 
 func (builder *CampaignsFieldParamBuilder) Build() string {
+	if len(builder.params) == 0 {
+		return ""
+	}
+
 	return strings.ReplaceAll(fmt.Sprintf("fields[campaign]=%v", builder.params), " ", ",")
 }
 
-func (builder *CampaignMessageFieldParamBuilder) Add(field CampaignMessageField) *CampaignMessageFieldParamBuilder {
-	builder.params = append(builder.params, field)
+func (builder *CampaignMessageFieldParamBuilder) Build() string {
+	if len(builder.params) == 0 {
+		return ""
+	}
 
-	return builder
+	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-message]=%v", builder.params), " ", ",")
 }
 
-func (builder *CampaignMessageFieldParamBuilder) Build() string {
-	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-message]=%v", builder.params), " ", ",")
+func (builder *CampaignRecipientEstimationFieldParamBuilder) Build() string {
+	if len(builder.params) == 0 {
+		return ""
+	}
+
+	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-recipient-estimation]=%v", builder.params), " ", ",")
 }

@@ -25,25 +25,6 @@ func MockedErrorResponse() exceptions.ApiErrorResponse {
 
 }
 
-func MockedLinkResponse() Links {
-	fake := faker.New()
-
-	self := fake.Internet().URL()
-	first := fake.Internet().URL()
-	last := fake.Internet().URL()
-	previous := fake.Internet().URL()
-	next := fake.Internet().URL()
-
-	return Links{
-		Self:     &self,
-		First:    &first,
-		Last:     &last,
-		Previous: &previous,
-		Next:     &next,
-	}
-
-}
-
 func PrepareMockResponse(respObj any) (io.ReadCloser, error) {
 	responseByte, err := json.Marshal(respObj)
 	if err != nil {

@@ -150,7 +150,7 @@ func (suit *CampaignsApiTestSuite) TestDeleteCampaignsOkRequest() {
 	suit.Nil(err)
 }
 
-func (suit *CampaignsApiTestSuite) TestCreateCampaignsServerError() {
+func (suit *CampaignsApiTestSuite) TestCreateCampaignServerError() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
@@ -166,12 +166,12 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignsServerError() {
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
-	_, err = suit.api.CreateCampaigns(context.Background(), reqData)
+	_, err = suit.api.CreateCampaign(context.Background(), reqData)
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
-func (suit *CampaignsApiTestSuite) TestCreateCampaignsBadRequest() {
+func (suit *CampaignsApiTestSuite) TestCreateCampaignBadRequest() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
@@ -187,12 +187,12 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignsBadRequest() {
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
-	_, err = suit.api.CreateCampaigns(context.Background(), reqData)
+	_, err = suit.api.CreateCampaign(context.Background(), reqData)
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
-func (suit *CampaignsApiTestSuite) TestCreateCampaignsOKRequest() {
+func (suit *CampaignsApiTestSuite) TestCreateCampaignOKRequest() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := mockCampaignResponse()
 
@@ -208,7 +208,7 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignsOKRequest() {
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
-	res, err := suit.api.CreateCampaigns(context.Background(), reqData)
+	res, err := suit.api.CreateCampaign(context.Background(), reqData)
 
 	suit.Nil(err)
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)

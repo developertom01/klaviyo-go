@@ -1,13 +1,11 @@
 package models
 
-import "github.com/developertom01/klaviyo-go/common"
-
 type (
 	Account struct {
 		Type       string            `json:"type"`
 		ID         string            `json:"id"`
 		Attributes AccountAttributes `json:"attributes"`
-		Links      common.Links      `json:"links"`
+		Links      Links             `json:"links"`
 	}
 
 	AccountAttributes struct {
@@ -27,8 +25,8 @@ type (
 	}
 
 	AccountsCollectionResponse struct {
-		Data  []Account    `json:"data"`
-		Links common.Links `json:"links"`
+		Data  []Account `json:"data"`
+		Links Links     `json:"links"`
 	}
 
 	AccountResponse struct {

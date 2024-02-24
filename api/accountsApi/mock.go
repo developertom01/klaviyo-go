@@ -1,7 +1,6 @@
 package accounts
 
 import (
-	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/models"
 	"github.com/jaswdr/faker"
 )
@@ -12,7 +11,7 @@ func mockAccountsData() models.Account {
 	return models.Account{
 		Type:  fake.Lorem().Word(),
 		ID:    fake.UUID().V4(),
-		Links: common.MockedLinkResponse(),
+		Links: models.MockedLinkResponse(),
 		Attributes: models.AccountAttributes{
 			Industry:          fake.Lorem().Word(),
 			Timezone:          fake.Time().Timezone(),
@@ -45,7 +44,7 @@ func mockedAccountsCollectionResponse(n int) models.AccountsCollectionResponse {
 	}
 
 	return models.AccountsCollectionResponse{
-		Links: common.MockedLinkResponse(),
+		Links: models.MockedLinkResponse(),
 		Data:  accounts,
 	}
 }

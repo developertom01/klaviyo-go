@@ -1,5 +1,7 @@
 package models
 
+import "github.com/jaswdr/faker"
+
 type MessageContent struct {
 	Subject      *string `json:"subject,omitempty"`        //The subject of the message
 	PreviewText  *string `json:"preview_text,omitempty"`   //Preview text associated with the message
@@ -103,3 +105,30 @@ const (
 	SendStrategyMethodImmediate     SendStrategyMethod = "immediate"
 	SendStrategyMethodSmartSendTime SendStrategyMethod = "smart_send_time"
 )
+
+type Links struct {
+	Self     *string `json:"self,omitempty"`
+	First    *string `json:"first,omitempty"`
+	Last     *string `json:"last,omitempty"`
+	Previous *string `json:"previous,omitempty"`
+	Next     *string `json:"next,omitempty"`
+}
+
+func MockedLinkResponse() Links {
+	fake := faker.New()
+
+	self := fake.Internet().URL()
+	first := fake.Internet().URL()
+	last := fake.Internet().URL()
+	previous := fake.Internet().URL()
+	next := fake.Internet().URL()
+
+	return Links{
+		Self:     &self,
+		First:    &first,
+		Last:     &last,
+		Previous: &previous,
+		Next:     &next,
+	}
+
+}

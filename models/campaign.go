@@ -1,16 +1,12 @@
 package models
 
-import (
-	"github.com/developertom01/klaviyo-go/common"
-)
-
 type (
 	CampaignsCollectionResponse struct {
 		Data     []Campaign         `json:"data"`
-		Links    common.Links       `json:"links"`
+		Links    Links              `json:"links"`
 		Included []CampaignIncluded `json:"included"`
 	}
-	CampaignsResponse struct {
+	CampaignResponse struct {
 		Data     Campaign           `json:"data"`
 		Included []CampaignIncluded `json:"included"`
 	}
@@ -53,9 +49,25 @@ type (
 		Channel       *string               `json:"channel,omitempty"`
 		Content       *MessageContent       `json:"content,omitempty"` // //Additional attributes relating to the content of the message
 		SendTimes     []SendTime            `json:"send_times,omitempty"`
-		RenderOptions *MessageRenderOptions `json:"render_options,omitempty"` ////Additional options for rendering the message
+		RenderOptions *MessageRenderOptions `json:"render_options,omitempty"` //Additional options for rendering the message
 		CreatedAt     *string               `json:"created_at,omitempty"`
 		UpdatedAt     *string               `json:"updated_at,omitempty"`
 		Name          *string               `json:"name,omitempty"`
+	}
+)
+
+type (
+	CampaignRecipientCountResponse struct {
+		Data CampaignRecipientCountData `json:"data"`
+	}
+	CampaignRecipientCountData struct {
+		Type       string                           `json:"type"`       //campaign-recipient-estimation
+		ID         string                           `json:"id"`         //The ID of the campaign for which to get the estimated number of recipients
+		Attributes CampaignRecipientCountAttributes `json:"attributes"` //The estimated number of unique recipients the campaign will send to
+		Links      DataLinks                        `json:"links"`
+	}
+
+	CampaignRecipientCountAttributes struct {
+		EstimatedRecipientCount int64 `json:"estimated_recipient_count"` //The estimated number of unique recipients the campaign will send to
 	}
 )
