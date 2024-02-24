@@ -87,6 +87,69 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignsOkResponse() {
 	suit.Equal(mockedRespData.Data[0].ID, resp.Data[0].ID)
 }
 
+func (suit *CampaignsApiTestSuite) TestDeleteCampaignsServerError() {
+	var campaignId = "test id"
+
+	mockedRespData := common.MockedErrorResponse()
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 bad Gateway",
+		StatusCode: http.StatusBadGateway,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	err = suit.api.DeleteCampaigns(context.Background(), campaignId)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestDeleteCampaignsBadRequest() {
+	var campaignId = "test id"
+
+	mockedRespData := common.MockedErrorResponse()
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 bad Gateway",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	err = suit.api.DeleteCampaigns(context.Background(), campaignId)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestDeleteCampaignsOkRequest() {
+	var campaignId = "test id"
+
+	mockedRespData := common.MockedErrorResponse()
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "204 No content",
+		StatusCode: http.StatusNoContent,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	err = suit.api.DeleteCampaigns(context.Background(), campaignId)
+
+	suit.Nil(err)
+}
+
 func TestCampaignsApiTestSuite(t *testing.T) {
 	suite.Run(t, new(CampaignsApiTestSuite))
 

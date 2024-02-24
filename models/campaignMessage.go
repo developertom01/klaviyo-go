@@ -1,8 +1,40 @@
 package models
 
+import "encoding/json"
+
+type CampaignMessageIncludedUnionType map[string]any
+
+func (cms *CampaignMessageIncludedUnionType) GetCampaign() (*Campaign, bool) {
+	data, err := json.Marshal(cms)
+	if err != nil {
+		return nil, false
+	}
+
+	var campaign Campaign
+	if err = json.Unmarshal(data, &campaign); err != nil {
+		return nil, false
+	}
+
+	return &campaign, true
+}
+
+func (cms *CampaignMessageIncludedUnionType) GetTemplate() (*Template, bool) {
+	data, err := json.Marshal(cms)
+	if err != nil {
+		return nil, false
+	}
+
+	var template Template
+	if err = json.Unmarshal(data, &template); err != nil {
+		return nil, false
+	}
+
+	return &template, true
+}
+
 type CampaignMessageResponse struct {
-	Data     CampaignMessage           `json:"data"`
-	Included []CampaignMessageIncluded `json:"included"`
+	Data     CampaignMessage                    `json:"data"`
+	Included []CampaignMessageIncludedUnionType `json:"included"` //This can either be array of Template or Campaign object.
 }
 
 type CampaignMessageIncluded struct {
@@ -40,13 +72,13 @@ type CampaignMessage struct {
 }
 
 type CampaignMessageAttributes struct {
-	Label         string        `json:"label"`
-	Channel       string        `json:"channel"`
-	Content       Content       `json:"content"`
-	SendTimes     []SendTime    `json:"send_times"`
-	RenderOptions RenderOptions `json:"render_options"`
-	CreatedAt     string        `json:"created_at"`
-	UpdatedAt     string        `json:"updated_at"`
+	Label         string               `json:"label"`
+	Channel       string               `json:"channel"`
+	Content       MessageContent       `json:"content"`
+	SendTimes     []SendTime           `json:"send_times"`
+	RenderOptions MessageRenderOptions `json:"render_options"`
+	CreatedAt     string               `json:"created_at"`
+	UpdatedAt     string               `json:"updated_at"`
 }
 
 type CampaignRelationships struct {

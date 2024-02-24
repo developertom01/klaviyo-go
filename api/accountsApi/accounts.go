@@ -49,7 +49,7 @@ func (api *accountApi) getAccountsInternal(ctx context.Context, fields []Account
 		return nil, errors.Join(urlSerializationError, err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (api *accountApi) GetAccount(ctx context.Context, id string, fields []Accou
 	if err != nil {
 		return nil, errors.Join(urlSerializationError, err)
 	}
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -91,6 +91,6 @@ func (api *accountApi) GetAccount(ctx context.Context, id string, fields []Accou
 
 	var accountResp models.AccountResponse
 	err = json.Unmarshal(byteData, &accountResp)
-	
+
 	return &accountResp, err
 }

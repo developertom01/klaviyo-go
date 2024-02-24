@@ -11,6 +11,7 @@ import (
 func mockCampaignsData() models.Campaign {
 	fake := faker.New()
 
+	boolData := fake.Bool()
 	return models.Campaign{
 		ID: fake.UUID().V4(),
 		Relationships: &models.CampaignRelationship{
@@ -47,9 +48,9 @@ func mockCampaignsData() models.Campaign {
 				UseSmartSending: fake.Bool(),
 			},
 			TrackingOptions: models.TrackingOptions{
-				IsAddUtm:         fake.Bool(),
-				IsTrackingClicks: fake.Bool(),
-				IsTrackingOpens:  fake.Bool(),
+				IsAddUtm:         &boolData,
+				IsTrackingClicks: &boolData,
+				IsTrackingOpens:  &boolData,
 				UtmParams: []models.UtmParam{
 					{
 						Name:  fake.Lorem().Word(),
@@ -62,17 +63,8 @@ func mockCampaignsData() models.Campaign {
 				},
 			},
 			SendStrategy: models.SendStrategy{
-				Method: fake.Lorem().Word(),
-				OptionsStatic: models.OptionsStatic{
-					IsLocal:                       fake.Bool(),
-					SendPastRecipientsImmediately: fake.Bool(),
-					Datetime:                      time.Now().Format(time.RFC3339),
-				},
-				OptionsThrottled: models.OptionsThrottled{
-					ThrottlePercentage: fake.Int64(),
-					Datetime:           time.Now().Format(time.RFC3339),
-				},
-				OptionsSto: models.OptionsSto{
+				Method: models.SendStrategyMethodImmediate,
+				OptionsSto: &models.OptionsSto{
 					Date: time.Now().Format(time.RFC3339),
 				},
 			},
