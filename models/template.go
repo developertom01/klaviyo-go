@@ -26,11 +26,16 @@ type TemplateAttributes struct {
 	Updated    *string    `json:"updated"` //The date the template was updated in ISO 8601 format (YYYY-MM-DDTHH:MM:SS.mmmmmm)
 }
 
+// editor_type has a fixed set of values:
+// SYSTEM_DRAGGABLE: indicates a drag-and-drop editor template
+// SIMPLE: A rich text editor template
+// CODE: A custom HTML template
+// USER_DRAGGABLE: A hybrid template, using custom HTML in the drag-and-drop editor
 type EditorType string
 
 const (
-	EditorTypeSystemDraggable = "SYSTEM_DRAGGABLE"
-	EditorTypeSimple          = "SIMPLE"
-	EditorTypeCode            = "CODE"
-	EditorTypeUserDraggable   = "USER_DRAGGABLE"
+	EditorTypeSystemDraggable = "SYSTEM_DRAGGABLE" //indicates a drag-and-drop editor template
+	EditorTypeSimple          = "SIMPLE"           //A rich text editor template
+	EditorTypeCode            = "CODE"             //A custom HTML template
+	EditorTypeUserDraggable   = "USER_DRAGGABLE"   // A hybrid template, using custom HTML in the drag-and-drop editor
 )
