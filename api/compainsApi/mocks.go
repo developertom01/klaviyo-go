@@ -8,6 +8,8 @@ import (
 	"github.com/jaswdr/faker"
 )
 
+const campaignMessageType string = "campaign-message"
+
 func mockCampaignsData() models.Campaign {
 	fake := faker.New()
 
@@ -17,7 +19,7 @@ func mockCampaignsData() models.Campaign {
 		Relationships: &models.CampaignRelationship{
 			CampaignMessage: &models.Relationships{
 				Data: models.RelationshipData{
-					Type: "campaign-message",
+					Type: campaignMessageType,
 					ID:   fake.UUID().V4(),
 				},
 				Links: models.RelationshipLinks{
@@ -93,5 +95,68 @@ func mockCampaignCollectionResponse(n int) models.CampaignsCollectionResponse {
 func mockCampaignResponse() models.CampaignsResponse {
 	return models.CampaignsResponse{
 		Data: mockCampaignsData(),
+	}
+}
+
+func mockCreateCampaignRequestData() CreateCampaignRequestData {
+	fake := faker.New()
+
+	return CreateCampaignRequestData{
+		Data: CreateCampaignData{
+			Type: "Campaign",
+			Attributes: CreateCampaignDataDataAttributes{
+				Name: fake.Company().Name(),
+				SendStrategy: &CampaignDataAttributeSendStrategy{
+					Method: models.SendStrategyMethodSmartSendTime,
+					OptionsSto: OptionsSto{
+						Date: time.Now().Format(time.RFC822),
+					},
+				},
+				Audiences: CampaignDataAttributesAudiences{
+					Included: []string{},
+					Excluded: []string{},
+				},
+				CampaignMessages: CampaignAttributesMessages{
+					Data: []CampaignAttributesMessagesData{{
+						Type: campaignMessageType,
+						Attributes: CampaignAttributesMessagesDataAttributes{
+							Channel: "email",
+						},
+					}},
+				},
+			},
+		},
+	}
+}
+
+func mockUpdateCampaignRequestData() UpdateCampaignRequestData {
+	fake := faker.New()
+
+	name := fake.Company().Name()
+	return UpdateCampaignRequestData{
+		Data: UpdateCampaignData{
+			Type: "Campaign",
+			Attributes: UpdateCampaignDataDataAttributes{
+				Name: &name,
+				SendStrategy: &CampaignDataAttributeSendStrategy{
+					Method: models.SendStrategyMethodSmartSendTime,
+					OptionsSto: OptionsSto{
+						Date: time.Now().Format(time.RFC822),
+					},
+				},
+				Audiences: &CampaignDataAttributesAudiences{
+					Included: []string{},
+					Excluded: []string{},
+				},
+				CampaignMessages: CampaignAttributesMessages{
+					Data: []CampaignAttributesMessagesData{{
+						Type: campaignMessageType,
+						Attributes: CampaignAttributesMessagesDataAttributes{
+							Channel: "email",
+						},
+					}},
+				},
+			},
+		},
 	}
 }

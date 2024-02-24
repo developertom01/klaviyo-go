@@ -88,7 +88,7 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignsOkResponse() {
 }
 
 func (suit *CampaignsApiTestSuite) TestDeleteCampaignsServerError() {
-	var campaignId = "test id"
+	var campaignId = "test id2"
 
 	mockedRespData := common.MockedErrorResponse()
 	bodyResp, err := common.PrepareMockResponse(mockedRespData)
@@ -148,6 +148,137 @@ func (suit *CampaignsApiTestSuite) TestDeleteCampaignsOkRequest() {
 	err = suit.api.DeleteCampaigns(context.Background(), campaignId)
 
 	suit.Nil(err)
+}
+
+func (suit *CampaignsApiTestSuite) TestCreateCampaignsServerError() {
+	reqData := mockCreateCampaignRequestData()
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 bad Gateway",
+		StatusCode: http.StatusBadGateway,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.CreateCampaigns(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestCreateCampaignsBadRequest() {
+	reqData := mockCreateCampaignRequestData()
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 bad Request",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.CreateCampaigns(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestCreateCampaignsOKRequest() {
+	reqData := mockCreateCampaignRequestData()
+	mockedRespData := mockCampaignResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "201 Created",
+		StatusCode: http.StatusCreated,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	res, err := suit.api.CreateCampaigns(context.Background(), reqData)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
+func (suit *CampaignsApiTestSuite) TestUpdateCampaignsServerError() {
+	var campaignId = "123232"
+	reqData := mockCreateCampaignRequestData()
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 bad Gateway",
+		StatusCode: http.StatusBadGateway,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.UpdateCampaigns(context.Background(), campaignId, reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestUpdateCampaignsBadRequest() {
+	var campaignId = "123232"
+	reqData := mockCreateCampaignRequestData()
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 bad request",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.UpdateCampaigns(context.Background(), campaignId, reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestUpdateCampaignsOKRequest() {
+	var campaignId = "123232"
+	reqData := mockCreateCampaignRequestData()
+	mockedRespData := mockCampaignResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "200 Created",
+		StatusCode: http.StatusOK,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	res, err := suit.api.UpdateCampaigns(context.Background(), campaignId, reqData)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
 
 func TestCampaignsApiTestSuite(t *testing.T) {

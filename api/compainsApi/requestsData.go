@@ -22,30 +22,30 @@ type UpdateCampaignData struct {
 }
 
 type UpdateCampaignDataDataAttributes struct {
-	Name             *string                                       `json:"name,omitempty"`             //The campaign name
-	Audiences        *string                                       `json:"audiences,omitempty"`        //The audiences to be included and/or excluded from the campaign
-	SendStrategy     *CreateCampaignDataDataAttributesSendStrategy `json:"send_strategy,omitempty"`    //The send strategy the campaign will send with. Defaults to 'Immediate' send strategy.
-	SendOptions      *SendOptions                                  `json:"send_options,omitempty"`     //Options to use when sending a campaign
-	TrackingOptions  *TrackingOptions                              `json:"tracking_options,omitempty"` //The tracking options associated with the campaign
-	CampaignMessages CreateCampaignAttributesMessages              `json:"campaign-messages"`          //The message(s) associated with the campaign
+	Name             *string                            `json:"name,omitempty"`             //The campaign name
+	Audiences        *CampaignDataAttributesAudiences   `json:"audiences,omitempty"`        //The audiences to be included and/or excluded from the campaign
+	SendStrategy     *CampaignDataAttributeSendStrategy `json:"send_strategy,omitempty"`    //The send strategy the campaign will send with. Defaults to 'Immediate' send strategy.
+	SendOptions      *SendOptions                       `json:"send_options,omitempty"`     //Options to use when sending a campaign
+	TrackingOptions  *TrackingOptions                   `json:"tracking_options,omitempty"` //The tracking options associated with the campaign
+	CampaignMessages CampaignAttributesMessages         `json:"campaign-messages"`          //The message(s) associated with the campaign
 }
 
 type CreateCampaignDataDataAttributes struct {
-	Name             string                                        `json:"name"`                       //The campaign name
-	Audiences        string                                        `json:"audiences"`                  //The audiences to be included and/or excluded from the campaign
-	SendStrategy     *CreateCampaignDataDataAttributesSendStrategy `json:"send_strategy,omitempty"`    //The send strategy the campaign will send with. Defaults to 'Immediate' send strategy.
-	SendOptions      *SendOptions                                  `json:"send_options,omitempty"`     //Options to use when sending a campaign
-	TrackingOptions  *TrackingOptions                              `json:"tracking_options,omitempty"` //The tracking options associated with the campaign
-	CampaignMessages CreateCampaignAttributesMessages              `json:"campaign-messages"`          //The message(s) associated with the campaign
+	Name             string                             `json:"name"`                       //The campaign name
+	Audiences        CampaignDataAttributesAudiences    `json:"audiences"`                  //The audiences to be included and/or excluded from the campaign
+	SendStrategy     *CampaignDataAttributeSendStrategy `json:"send_strategy,omitempty"`    //The send strategy the campaign will send with. Defaults to 'Immediate' send strategy.
+	SendOptions      *SendOptions                       `json:"send_options,omitempty"`     //Options to use when sending a campaign
+	TrackingOptions  *TrackingOptions                   `json:"tracking_options,omitempty"` //The tracking options associated with the campaign
+	CampaignMessages CampaignAttributesMessages         `json:"campaign-messages"`          //The message(s) associated with the campaign
 }
 
-type CreateCampaignDataDataAttributesAudiences struct {
+type CampaignDataAttributesAudiences struct {
 	Included []string `json:"included"`
 	Excluded []string `json:"excluded"`
 }
 
-type CreateCampaignAttributesMessages struct {
-	Data []CreateCampaignAttributesMessagesData `json:"data"`
+type CampaignAttributesMessages struct {
+	Data []CampaignAttributesMessagesData `json:"data"`
 }
 
 // The tracking options associated with the campaign
@@ -56,12 +56,12 @@ type TrackingOptions struct {
 	IsTrackingOpens  *bool      `json:"is_tracking_opens,omitempty"`  //Whether the campaign is tracking open events. If not specified, uses company defaults.
 }
 
-type CreateCampaignAttributesMessagesData struct {
-	Type       string                                         `json:"type"`
-	Attributes CreateCampaignAttributesMessagesDataAttributes `json:"attributes"`
+type CampaignAttributesMessagesData struct {
+	Type       string                                   `json:"type"`
+	Attributes CampaignAttributesMessagesDataAttributes `json:"attributes"`
 }
 
-type CreateCampaignAttributesMessagesDataAttributes struct {
+type CampaignAttributesMessagesDataAttributes struct {
 	Channel       string                `json:"channel"`                  //The channel the message is to be sent on (email or sms, for example)
 	Label         *string               `json:"label,omitempty"`          //The label or name on the message
 	Content       *MessageContent       `json:"content,omitempty"`        //Additional attributes relating to the content of the message
@@ -90,7 +90,7 @@ type SendOptions struct {
 	UseSmartSending *bool `json:"use_smart_sending"` //Use smart sending. Defaults to True
 }
 
-type CreateCampaignDataDataAttributesSendStrategy struct {
+type CampaignDataAttributeSendStrategy struct {
 	Method           models.SendStrategyMethod `json:"method"`                      //Describes the shape of the options object. Allowed values: ['static', 'throttled', 'immediate', 'smart_send_time']
 	OptionsStatic    *OptionsStatic            `json:"options_static,omitempty"`    //The send configuration options the campaign will send with. These define variables that alter the send strategy and must match the given method. Intended to be used with the 'static' method.
 	OptionsThrottled *OptionsThrottled         `json:"options_throttled,omitempty"` //The send configuration options the campaign will send with. These define variables that alter the send strategy and must match the given method. Intended to be used with the 'throttled' method.
