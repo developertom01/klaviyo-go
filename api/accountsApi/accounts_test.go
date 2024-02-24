@@ -83,7 +83,9 @@ func (suit *AccountsApiTestSuite) TestGetAccountsOkResponse() {
 	}
 
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-	accountResp, err := suit.api.GetAccounts(context.Background(), []AccountsField{ContactInformation, public_api_key})
+	fb := NewAccountsFieldParamsBuilder().Add(AccountsFieldContactInformation).Add(AccountsFieldContactInformation_DefaultWebsiteUrl)
+	fieldsParam := fb.Build()
+	accountResp, err := suit.api.GetAccounts(context.Background(), &fieldsParam)
 
 	suit.Nil(err)
 	suit.Equal(mockedAccount.Data[0].ID, accountResp.Data[0].ID)
@@ -146,7 +148,9 @@ func (suit *AccountsApiTestSuite) TestGetAccountOkResponse() {
 	}
 
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-	accountResp, err := suit.api.GetAccount(context.Background(), companyId, []AccountsField{ContactInformation, public_api_key})
+	fb := NewAccountsFieldParamsBuilder().Add(AccountsFieldContactInformation).Add(AccountsFieldContactInformation_DefaultWebsiteUrl)
+	fieldsParam := fb.Build()
+	accountResp, err := suit.api.GetAccount(context.Background(), companyId, &fieldsParam)
 
 	suit.Nil(err)
 	suit.Equal(mockedAccount.Data.ID, accountResp.Data.ID)

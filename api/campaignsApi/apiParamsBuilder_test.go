@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCampaignsFieldParamBuilderAdd(t *testing.T) {
+func TestCampaignsFieldParamBuilderBuilder(t *testing.T) {
 	var expectedString = "fields[campaign]=[created_at,archived,name]"
 
 	builder := NewCampaignsFieldParamBuilder()
@@ -20,6 +20,15 @@ func TestCampaignMessageFieldParamBuilder(t *testing.T) {
 
 	builder := NewCampaignMessageFieldParamBuilder()
 	builder.Add(CampaignMessageFieldChannel).Add(CampaignMessageFieldLabel).Add(CampaignMessageFieldContent)
+
+	assert.Equal(t, expectedString, builder.Build())
+}
+
+func TestCampaignRecipientEstimationFieldParamBuilder(t *testing.T) {
+	var expectedString = "fields[campaign-recipient-estimation]=[estimated_recipient_count]"
+
+	builder := NewCampaignRecipientEstimationFieldParamBuilder()
+	builder.Add(CampaignRecipientEstimationFieldEstimatedRecipientCount)
 
 	assert.Equal(t, expectedString, builder.Build())
 }

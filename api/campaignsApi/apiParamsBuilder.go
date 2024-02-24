@@ -6,13 +6,15 @@ import (
 	"strings"
 )
 
-type CampaignsField string
+type (
+	CampaignsField string
 
-type CampaignMessageField string
+	CampaignMessageField string
 
-type CampaignSortField string
+	CampaignSortField string
 
-type CampaignRecipientEstimationField string
+	CampaignRecipientEstimationField string
+)
 
 const (
 	CampaignsFieldName                                                    CampaignsField = "name"
@@ -72,17 +74,19 @@ const (
 	CampaignRecipientEstimationFieldEstimatedRecipientCount CampaignRecipientEstimationField = "estimated_recipient_count"
 )
 
-type CampaignsFieldParamBuilder struct {
-	params []CampaignsField
-}
+type (
+	CampaignsFieldParamBuilder struct {
+		params []CampaignsField
+	}
 
-type CampaignMessageFieldParamBuilder struct {
-	params []CampaignMessageField
-}
+	CampaignMessageFieldParamBuilder struct {
+		params []CampaignMessageField
+	}
 
-type CampaignRecipientEstimationFieldParamBuilder struct {
-	params []CampaignRecipientEstimationField
-}
+	CampaignRecipientEstimationFieldParamBuilder struct {
+		params []CampaignRecipientEstimationField
+	}
+)
 
 func NewCampaignRecipientEstimationFieldParamBuilder() *CampaignRecipientEstimationFieldParamBuilder {
 	return &CampaignRecipientEstimationFieldParamBuilder{}
@@ -119,6 +123,7 @@ func (builder *CampaignMessageFieldParamBuilder) Add(field CampaignMessageField)
 	return builder
 }
 
+// Build query param string. eg. fields[campaign]=[name,contact_information]
 func (builder *CampaignsFieldParamBuilder) Build() string {
 	if len(builder.params) == 0 {
 		return ""
@@ -127,6 +132,7 @@ func (builder *CampaignsFieldParamBuilder) Build() string {
 	return strings.ReplaceAll(fmt.Sprintf("fields[campaign]=%v", builder.params), " ", ",")
 }
 
+// Build query param string. eg. fields[campaign-message]=[name,contact_information]
 func (builder *CampaignMessageFieldParamBuilder) Build() string {
 	if len(builder.params) == 0 {
 		return ""
@@ -135,6 +141,7 @@ func (builder *CampaignMessageFieldParamBuilder) Build() string {
 	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-message]=%v", builder.params), " ", ",")
 }
 
+// Build query param string. eg. fields[campaign-recipient-estimation]=[name,contact_information]
 func (builder *CampaignRecipientEstimationFieldParamBuilder) Build() string {
 	if len(builder.params) == 0 {
 		return ""

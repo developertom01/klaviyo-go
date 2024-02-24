@@ -13,8 +13,10 @@ import (
 
 type (
 	AccountsApi interface {
-		GetAccounts(ctx context.Context, fields []AccountsField) (*models.AccountsCollectionResponse, error)
-		GetAccount(ctx context.Context, id string, fields []AccountsField) (*models.AccountResponse, error)
+		//Retrieve the account(s) associated with a given private API key. This will return 1 account object within the array.
+		GetAccounts(ctx context.Context, fields *string) (*models.AccountsCollectionResponse, error)
+		//Retrieve a single account object by its account ID. You can only request the account by which the private API key was generated.
+		GetAccount(ctx context.Context, id string, fields *string) (*models.AccountResponse, error)
 	}
 
 	accountApi struct {
@@ -40,14 +42,12 @@ func NewAccountsApi(session common.Session, httpClient common.HTTPClient) Accoun
 	}
 }
 
-func (api *accountApi) getAccountsInternal(ctx context.Context, fields []AccountsField) (*models.AccountsCollectionResponse, error) {
-	queryParamMaps := map[string][]string{
-		"fields[account]": accountsFieldsToStrings(fields),
+func (api *accountApi) getAccountsInternal(ctx context.Context, fields *string) (*models.AccountsCollectionResponse, error) {
+	var fieldsParam = ""
+	if fields != nil {
+		fieldsParam = *fields
 	}
-	url, err := common.BuildURLWithQueryParams(fmt.Sprintf("%s", api.baseApiUrl), queryParamMaps)
-	if err != nil {
-		return nil, errors.Join(urlSerializationError, err)
-	}
+	url := fmt.Sprintf("%s/?%s", api.baseApiUrl, fieldsParam)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -67,18 +67,18 @@ func (api *accountApi) getAccountsInternal(ctx context.Context, fields []Account
 	return &accountResp, nil
 }
 
-func (api *accountApi) GetAccounts(ctx context.Context, fields []AccountsField) (*models.AccountsCollectionResponse, error) {
+func (api *accountApi) GetAccounts(ctx context.Context, fields *string) (*models.AccountsCollectionResponse, error) {
 	return api.getAccountsInternal(ctx, fields)
 }
 
-func (api *accountApi) GetAccount(ctx context.Context, id string, fields []AccountsField) (*models.AccountResponse, error) {
-	queryParamMaps := map[string][]string{
-		"fields[account]": accountsFieldsToStrings(fields),
+func (api *accountApi) GetAccount(ctx context.Context, id string, fields *string) (*models.AccountResponse, error) {
+	var fieldsParam = ""
+	if fields != nil {
+		fieldsParam = *fields
 	}
-	url, err := common.BuildURLWithQueryParams(fmt.Sprintf("%s/%s", api.baseApiUrl, id), queryParamMaps)
-	if err != nil {
-		return nil, errors.Join(urlSerializationError, err)
-	}
+
+	url := fmt.Sprintf("%s/%s/?%s", api.baseApiUrl, id, fieldsParam)
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
