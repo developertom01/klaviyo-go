@@ -31,7 +31,7 @@ type (
 
 		//Get the estimated recipient count for a campaign with the provided campaign ID.
 		//You can refresh this count by using the Create Campaign Recipient Estimation Job endpoint.
-		GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr string) (*models.CampaignRecipientCountResponse, error)
+		GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr *string) (*models.CampaignRecipientCountResponse, error)
 
 		//Clones an existing campaign, returning a new campaign based on the original with a new ID and name.
 		CreateCampaignClone(ctx context.Context, data CreateCampaignCloneRequestData) (*models.CampaignResponse, error)
@@ -187,9 +187,12 @@ func (api *campaignsApi) DeleteCampaigns(ctx context.Context, id string) error {
 	return err
 }
 
-// ---Untested
-func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr string) (*models.CampaignRecipientCountResponse, error) {
-	url := fmt.Sprintf("%s/api/campaign-recipient-estimations/%s/?%s", api.baseApiUrl, id, fieldsStr)
+func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr *string) (*models.CampaignRecipientCountResponse, error) {
+	var fieldsParam = ""
+	if fieldsStr != nil {
+		fieldsParam = *fieldsStr
+	}
+	url := fmt.Sprintf("%s/api/campaign-recipient-estimations/%s/?%s", api.baseApiUrl, id, fieldsParam)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

@@ -281,6 +281,70 @@ func (suit *CampaignsApiTestSuite) TestUpdateCampaignsOKRequest() {
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
 
+func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationServerError() {
+	var campaignId = "123232"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 bad Gateway",
+		StatusCode: http.StatusBadGateway,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignRecipientEstimation(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationBadRequest() {
+	var campaignId = "123232"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 bad Gateway",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignRecipientEstimation(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationOkStatus() {
+	var campaignId = "test-campaign-1"
+	mockedRespData := mockCampaignResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "200 bad Gateway",
+		StatusCode: http.StatusOK,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	res, err := suit.api.GetCampaignRecipientEstimation(context.Background(), campaignId, nil)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
 func TestCampaignsApiTestSuite(t *testing.T) {
 	suite.Run(t, new(CampaignsApiTestSuite))
 
