@@ -31,13 +31,18 @@ type (
 
 		//Get the estimated recipient count for a campaign with the provided campaign ID.
 		//You can refresh this count by using the Create Campaign Recipient Estimation Job endpoint.
-		GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr *string) (*models.CampaignRecipientCountResponse, error)
+		GetCampaignRecipientEstimation(ctx context.Context, id string, fields []models.CampaignRecipientEstimationField) (*models.CampaignRecipientCountResponse, error)
 
 		//Clones an existing campaign, returning a new campaign based on the original with a new ID and name.
 		CreateCampaignClone(ctx context.Context, data CreateCampaignCloneRequestData) (*models.CampaignResponse, error)
 
 		//Return the related campaign
-		GetCampaignMessageCampaign(ctx context.Context, messageId string, fieldsParam *string) (*models.CampaignResponse, error)
+		GetCampaignMessageCampaign(ctx context.Context, messageId string, campaignFields []models.CampaignsField) (*models.CampaignResponse, error)
+
+		//Return the related template for `messageId`
+		GetCampaignMessageTemplate(ctx context.Context, messageId string, templateFields []models.TemplateField) (*models.Template, error)
+		//Return all tags that belong to the given campaign.
+		GetCampaignTags(ctx context.Context, campaignId string, tagFields []models.TagField) (*models.TagsCollectionResponse, error)
 	}
 
 	campaignsApi struct {
@@ -58,30 +63,30 @@ func NewCampaignsApi(session common.Session, httpClient common.HTTPClient) Campa
 }
 
 type GetCampaignsOptions struct {
-	CampaignFields        *string
-	CampaignMessageFields *string
-	TagFields             *string
+	CampaignFields        []models.CampaignsField
+	CampaignMessageFields []models.CampaignMessageField
+	TagFields             []models.TagField
 	PageCursor            *string
-	Sort                  *CampaignSortField
-	Include               *string
+	Sort                  *models.CampaignSortField
+	Include               []string // TODO: build enum
 }
 
 func buildGetCampaignsParams(filter string, opt *GetCampaignsOptions) string {
 	var params = filter
 
-	if opt != nil && opt.CampaignFields != nil {
-		params = fmt.Sprintf("%s&%s", params, *opt.CampaignFields)
+	if opt == nil {
+		return params
 	}
-	if opt != nil && opt.CampaignMessageFields != nil {
-		params = fmt.Sprintf("%s&%s", params, *opt.CampaignMessageFields)
-	}
-	if opt != nil && opt.TagFields != nil {
-		params = fmt.Sprintf("%s&%s", params, *opt.TagFields)
-	}
-	if opt != nil && opt.PageCursor != nil {
+
+	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignFieldsParam(opt.CampaignFields))
+	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignMessageFieldsParam(opt.CampaignMessageFields))
+	params = fmt.Sprintf("%s&%s", params, models.BuildTagFieldParam(opt.TagFields))
+
+	if opt.PageCursor != nil {
 		params = fmt.Sprintf("%s&page[cursor]=%s", params, *opt.PageCursor)
 	}
-	if opt != nil && opt.Sort != nil {
+
+	if opt.Sort != nil {
 		params = fmt.Sprintf("%s&sort=%s", params, *opt.Sort)
 	}
 
@@ -190,11 +195,8 @@ func (api *campaignsApi) DeleteCampaigns(ctx context.Context, id string) error {
 	return err
 }
 
-func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id string, fieldsStr *string) (*models.CampaignRecipientCountResponse, error) {
-	var fieldsParam = ""
-	if fieldsStr != nil {
-		fieldsParam = *fieldsStr
-	}
+func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id string, fields []models.CampaignRecipientEstimationField) (*models.CampaignRecipientCountResponse, error) {
+	var fieldsParam = models.BuildCampaignRecipientEstimateFieldParam(fields)
 	url := fmt.Sprintf("%s/api/campaign-recipient-estimations/%s/?%s", api.baseApiUrl, id, fieldsParam)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -239,12 +241,9 @@ func (api *campaignsApi) CreateCampaignClone(ctx context.Context, data CreateCam
 	return &resp, err
 }
 
-func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, messageId string, fieldsParam *string) (*models.CampaignResponse, error) {
+func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, messageId string, campaignFields []models.CampaignsField) (*models.CampaignResponse, error) {
 
-	var params = ""
-	if fieldsParam == nil {
-		params = *fieldsParam
-	}
+	var params = models.BuildCampaignFieldsParam(campaignFields)
 	url := fmt.Sprintf("%s/api/campaign-messages/%s/campaign/?%s", api.baseApiUrl, messageId, params)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -261,4 +260,75 @@ func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, message
 	err = json.Unmarshal(byteData, &campaignResp)
 
 	return &campaignResp, err
+}
+
+func (api *campaignsApi) GetCampaignMessageTemplate(ctx context.Context, messageId string, templateFields []models.TemplateField) (*models.Template, error) {
+	var params = models.BuildTemplateFieldParam(templateFields)
+	url := fmt.Sprintf("%s/api/campaign-messages/%s/template/?%s", api.baseApiUrl, messageId, params)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, errors.Join(getCampaignsApiCallError, err)
+	}
+
+	var template models.Template
+	err = json.Unmarshal(byteData, &template)
+
+	return &template, err
+}
+
+func (api *campaignsApi) GetCampaignTags(ctx context.Context, campaignId string, tagFields []models.TagField) (*models.TagsCollectionResponse, error) {
+	var params = models.BuildTagFieldParam(tagFields)
+
+	url := fmt.Sprintf("%s/api/campaigns/%s/tags/?%s", api.baseApiUrl, campaignId, params)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, errors.Join(getCampaignsApiCallError, err)
+	}
+
+	var tags models.TagsCollectionResponse
+	err = json.Unmarshal(byteData, &tags)
+
+	return &tags, err
+}
+
+// Query parameters for GetCampaignMessages
+type GetCampaignMessagesOptions struct {
+	campaignMessageFieldParam []models.CampaignMessageField
+	campaignFieldsParam       []models.CampaignSortField
+}
+
+func (api *campaignsApi) GetCampaignMessages(ctx context.Context, campaignId string, tagsFieldParams *string) (*models.TagsCollectionResponse, error) {
+	var params = ""
+	if tagsFieldParams == nil {
+		params = *tagsFieldParams
+	}
+
+	url := fmt.Sprintf("%s/api/campaigns/%s/tags/?%s", api.baseApiUrl, campaignId, params)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, errors.Join(getCampaignsApiCallError, err)
+	}
+
+	var tags models.TagsCollectionResponse
+	err = json.Unmarshal(byteData, &tags)
+
+	return &tags, err
 }

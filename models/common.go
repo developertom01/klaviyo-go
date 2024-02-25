@@ -1,9 +1,19 @@
 package models
 
-import "github.com/jaswdr/faker"
+import (
+	"encoding/json"
+
+	"github.com/jaswdr/faker"
+)
 
 type (
-	MessageContent struct {
+	//MessageContent can be either MessageSmsContent | MessageSmsContent
+	// Default type of `MessageContent` is map[string]any but had
+	// iSMessageContentSms method which returns (MessageSmsContent, bool)
+	// and isMessageContentEmail which returns (MessageEmailContent, bool)
+	MessageContent map[string]any
+
+	MessageEmailContent struct {
 		Subject      *string `json:"subject,omitempty"`        //The subject of the message
 		PreviewText  *string `json:"preview_text,omitempty"`   //Preview text associated with the message
 		FromEmail    *string `json:"from_email,omitempty"`     //The email the message should be sent from
@@ -13,6 +23,12 @@ type (
 		BccEmail     *string `json:"bcc_email,omitempty"`      //Optional BCC email address
 	}
 
+	MessageSmsContent struct {
+		Body     *string `json:"body,omitempty"`      //The message body
+		MediaUrl *string `json:"media_url,omitempty"` //URL for included media
+	}
+
+	//Additional options for rendering the message
 	MessageRenderOptions struct {
 		ShortenLinks      *bool `json:"shorten_links,omitempty"`
 		AddOrgPrefix      *bool `json:"add_org_prefix,omitempty"`
@@ -30,8 +46,8 @@ type (
 	}
 
 	Relationships struct {
-		Data  RelationshipData  `json:"data"`
-		Links RelationshipLinks `json:"links"`
+		Data  *RelationshipData  `json:"data,omitempty"`
+		Links *RelationshipLinks `json:"links,omitempty"`
 	}
 
 	RelationshipData struct {
@@ -105,6 +121,38 @@ type (
 		Next     *string `json:"next,omitempty"`
 	}
 )
+
+// Returns `*MessageEmailContent` if type is email content
+func (mc MessageContent) IsMessageContentEmail() (*MessageEmailContent, bool) {
+	byteContent, err := json.Marshal(mc)
+	if err != nil {
+		return nil, false
+	}
+
+	var emailContent MessageEmailContent
+	err = json.Unmarshal(byteContent, &emailContent)
+	if err != nil {
+		return nil, false
+	}
+
+	return &emailContent, true
+}
+
+// Returns `*MessageSmsContent` if type is sms content
+func (mc MessageContent) IsMessageContentSms() (*MessageSmsContent, bool) {
+	byteContent, err := json.Marshal(mc)
+	if err != nil {
+		return nil, false
+	}
+
+	var smsContent MessageSmsContent
+	err = json.Unmarshal(byteContent, &smsContent)
+	if err != nil {
+		return nil, false
+	}
+
+	return &smsContent, true
+}
 
 // Describes the shape of the options object. Allowed values: ['static', 'throttled', 'immediate', 'smart_send_time']
 type SendStrategyMethod string

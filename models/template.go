@@ -1,5 +1,10 @@
 package models
 
+import (
+	"fmt"
+	"strings"
+)
+
 type (
 	TemplateResponse struct {
 		Data  []Template `json:"data"`
@@ -41,3 +46,22 @@ const (
 	EditorTypeCode            = "CODE"             //A custom HTML template
 	EditorTypeUserDraggable   = "USER_DRAGGABLE"   // A hybrid template, using custom HTML in the drag-and-drop editor
 )
+
+type TemplateField string
+
+const (
+	TemplateFieldName       TemplateField = "name"
+	TemplateFieldEditorType TemplateField = "editor_type"
+	TemplateFieldHtml       TemplateField = "html"
+	TemplateFieldText       TemplateField = "text"
+	TemplateFieldCreatedAt  TemplateField = "created_at"
+	TemplateFieldUpdatedAt  TemplateField = "updated_at"
+)
+
+func BuildTemplateFieldParam(fields []TemplateField) string {
+	if len(fields) == 0 {
+		return ""
+	}
+
+	return strings.ReplaceAll(fmt.Sprintf("fields[template]=%v", fields), " ", ",")
+}

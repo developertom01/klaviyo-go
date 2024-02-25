@@ -7,6 +7,7 @@ import (
 
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/exceptions"
+	"github.com/developertom01/klaviyo-go/models"
 	"github.com/developertom01/klaviyo-go/options"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -434,9 +435,7 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignBadRequest() {
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
-	pb := NewCampaignsFieldParamBuilder().Add(CampaignsCreatedAt).Add(CampaignsFieldArchived)
-	fieldsParam := pb.Build()
-	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, &fieldsParam)
+	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, []models.CampaignsField{models.CampaignsFieldArchived, models.CampaignsFieldAudience_Exclude})
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
@@ -458,9 +457,7 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignServerError() {
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
-	pb := NewCampaignsFieldParamBuilder().Add(CampaignsCreatedAt).Add(CampaignsFieldArchived)
-	fieldsParam := pb.Build()
-	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, &fieldsParam)
+	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, []models.CampaignsField{models.CampaignsFieldArchived, models.CampaignsFieldAudience})
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
@@ -482,9 +479,7 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignStatusOk() {
 	}
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
-	pb := NewCampaignsFieldParamBuilder().Add(CampaignsCreatedAt).Add(CampaignsFieldArchived)
-	fieldsParam := pb.Build()
-	res, err := suit.api.GetCampaignMessageCampaign(context.Background(), messageId, &fieldsParam)
+	res, err := suit.api.GetCampaignMessageCampaign(context.Background(), messageId, []models.CampaignsField{models.CampaignsFieldAudience, models.CampaignsFieldAudience_Exclude})
 
 	suit.Nil(err)
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)

@@ -14,9 +14,9 @@ import (
 type (
 	AccountsApi interface {
 		//Retrieve the account(s) associated with a given private API key. This will return 1 account object within the array.
-		GetAccounts(ctx context.Context, fields *string) (*models.AccountsCollectionResponse, error)
+		GetAccounts(ctx context.Context, accountFields []models.AccountsField) (*models.AccountsCollectionResponse, error)
 		//Retrieve a single account object by its account ID. You can only request the account by which the private API key was generated.
-		GetAccount(ctx context.Context, id string, fields *string) (*models.AccountResponse, error)
+		GetAccount(ctx context.Context, id string, accountFields []models.AccountsField) (*models.AccountResponse, error)
 	}
 
 	accountApi struct {
@@ -42,11 +42,9 @@ func NewAccountsApi(session common.Session, httpClient common.HTTPClient) Accoun
 	}
 }
 
-func (api *accountApi) getAccountsInternal(ctx context.Context, fields *string) (*models.AccountsCollectionResponse, error) {
-	var fieldsParam = ""
-	if fields != nil {
-		fieldsParam = *fields
-	}
+func (api *accountApi) getAccountsInternal(ctx context.Context, accountFields []models.AccountsField) (*models.AccountsCollectionResponse, error) {
+
+	var fieldsParam = models.BuildAccountFieldsParam(accountFields)
 	url := fmt.Sprintf("%s/?%s", api.baseApiUrl, fieldsParam)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -67,16 +65,13 @@ func (api *accountApi) getAccountsInternal(ctx context.Context, fields *string) 
 	return &accountResp, nil
 }
 
-func (api *accountApi) GetAccounts(ctx context.Context, fields *string) (*models.AccountsCollectionResponse, error) {
-	return api.getAccountsInternal(ctx, fields)
+func (api *accountApi) GetAccounts(ctx context.Context, accountFields []models.AccountsField) (*models.AccountsCollectionResponse, error) {
+	return api.getAccountsInternal(ctx, accountFields)
 }
 
-func (api *accountApi) GetAccount(ctx context.Context, id string, fields *string) (*models.AccountResponse, error) {
-	var fieldsParam = ""
-	if fields != nil {
-		fieldsParam = *fields
-	}
+func (api *accountApi) GetAccount(ctx context.Context, id string, accountFields []models.AccountsField) (*models.AccountResponse, error) {
 
+	var fieldsParam = models.BuildAccountFieldsParam(accountFields)
 	url := fmt.Sprintf("%s/%s/?%s", api.baseApiUrl, id, fieldsParam)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)

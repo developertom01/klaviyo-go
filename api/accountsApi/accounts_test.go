@@ -10,6 +10,7 @@ import (
 
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/exceptions"
+	"github.com/developertom01/klaviyo-go/models"
 	"github.com/developertom01/klaviyo-go/options"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -83,9 +84,7 @@ func (suit *AccountsApiTestSuite) TestGetAccountsOkResponse() {
 	}
 
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-	fb := NewAccountsFieldParamsBuilder().Add(AccountsFieldContactInformation).Add(AccountsFieldContactInformation_DefaultWebsiteUrl)
-	fieldsParam := fb.Build()
-	accountResp, err := suit.api.GetAccounts(context.Background(), &fieldsParam)
+	accountResp, err := suit.api.GetAccounts(context.Background(), []models.AccountsField{models.AccountsFieldContactInformation, models.AccountsFieldContactInformation_DefaultSenderName})
 
 	suit.Nil(err)
 	suit.Equal(mockedAccount.Data[0].ID, accountResp.Data[0].ID)
@@ -148,9 +147,7 @@ func (suit *AccountsApiTestSuite) TestGetAccountOkResponse() {
 	}
 
 	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-	fb := NewAccountsFieldParamsBuilder().Add(AccountsFieldContactInformation).Add(AccountsFieldContactInformation_DefaultWebsiteUrl)
-	fieldsParam := fb.Build()
-	accountResp, err := suit.api.GetAccount(context.Background(), companyId, &fieldsParam)
+	accountResp, err := suit.api.GetAccount(context.Background(), companyId, []models.AccountsField{models.AccountsFieldContactInformation, models.AccountsFieldContactInformation_DefaultSenderName})
 
 	suit.Nil(err)
 	suit.Equal(mockedAccount.Data.ID, accountResp.Data.ID)

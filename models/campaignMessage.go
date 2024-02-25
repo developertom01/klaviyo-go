@@ -1,6 +1,10 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+)
 
 type CampaignMessageIncludedUnionType map[string]any
 
@@ -106,3 +110,28 @@ type (
 		Updated         *string          `json:"updated,omitempty"`
 	}
 )
+
+type CampaignMessageField string
+
+const (
+	CampaignMessageFieldLabel                           CampaignMessageField = "label"
+	CampaignMessageFieldChannel                         CampaignMessageField = "channel"
+	CampaignMessageFieldContent                         CampaignMessageField = "content"
+	CampaignMessageFieldSendTimes                       CampaignMessageField = "send_times"
+	CampaignMessageFieldRenderOptions                   CampaignMessageField = "render_options"
+	CampaignMessageFieldRenderOptions_ShortenLinks      CampaignMessageField = "render_options.shorten_links"
+	CampaignMessageFieldRenderOptions_AddOrgPrefix      CampaignMessageField = "render_options.add_org_prefix"
+	CampaignMessageFieldRenderOptions_AddOrgLink        CampaignMessageField = "render_options.add_org_link"
+	CampaignMessageFieldRenderOptions_AddOptOutLanguage CampaignMessageField = "render_options.add_opt_out_language"
+	CampaignMessageFieldCreatedAt                       CampaignMessageField = "created_at"
+	CampaignMessageFieldUpdatedAt                       CampaignMessageField = "updated_at"
+)
+
+// Build query param string. eg. fields[campaign-message]=[name,contact_information]
+func BuildCampaignMessageFieldsParam(fields []CampaignMessageField) string {
+	if len(fields) == 0 {
+		return ""
+	}
+
+	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-message]=%v", fields), " ", ",")
+}
