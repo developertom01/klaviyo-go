@@ -63,5 +63,10 @@ func BuildTemplateFieldParam(fields []TemplateField) string {
 		return ""
 	}
 
-	return strings.ReplaceAll(fmt.Sprintf("fields[template]=%v", fields), " ", ",")
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("fields[template]=%v", strings.Join(formattedFields, ","))
 }

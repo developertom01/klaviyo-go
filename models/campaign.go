@@ -83,6 +83,8 @@ type (
 	CampaignSortField string
 
 	CampaignRecipientEstimationField string
+
+	CampaignIncludeField string
 )
 
 const (
@@ -108,8 +110,6 @@ const (
 	CampaignsFieldSendTime                                                CampaignsField = "send_time"
 )
 
-
-
 const (
 	CampaignSortFieldNameAsc  CampaignSortField = "name"
 	CampaignSortFieldNameDesc CampaignSortField = "-name"
@@ -128,6 +128,11 @@ const (
 )
 
 const (
+	CampaignIncludeFieldCampaignMessage CampaignIncludeField = "campaign-message"
+	CampaignIncludeFieldTags            CampaignIncludeField = "tags"
+)
+
+const (
 	CampaignRecipientEstimationFieldEstimatedRecipientCount CampaignRecipientEstimationField = "estimated_recipient_count"
 )
 
@@ -136,9 +141,13 @@ func BuildCampaignFieldsParam(fields []CampaignsField) string {
 		return ""
 	}
 
-	return strings.ReplaceAll(fmt.Sprintf("fields[campaign]=%v", fields), " ", ",")
-}
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
 
+	return fmt.Sprintf("fields[campaign]=%s", strings.Join(formattedFields, ","))
+}
 
 // Build query param string. eg. fields[campaign-recipient-estimation]=[name,contact_information]
 func BuildCampaignRecipientEstimateFieldParam(fields []CampaignRecipientEstimationField) string {
@@ -146,6 +155,23 @@ func BuildCampaignRecipientEstimateFieldParam(fields []CampaignRecipientEstimati
 		return ""
 	}
 
-	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-recipient-estimation]=%v", fields), " ", ",")
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("fields[campaign-recipient-estimation]=%s", strings.Join(formattedFields, ","))
 }
 
+func BuildCampaignIncludeFieldParam(fields []CampaignIncludeField) string {
+	if len(fields) == 0 {
+		return ""
+	}
+
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("include=%s", strings.Join(formattedFields, ","))
+}

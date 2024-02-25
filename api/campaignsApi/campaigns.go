@@ -68,7 +68,7 @@ type GetCampaignsOptions struct {
 	TagFields             []models.TagField
 	PageCursor            *string
 	Sort                  *models.CampaignSortField
-	Include               []string // TODO: build enum
+	Include               []models.CampaignIncludeField
 }
 
 func buildGetCampaignsParams(filter string, opt *GetCampaignsOptions) string {
@@ -81,6 +81,7 @@ func buildGetCampaignsParams(filter string, opt *GetCampaignsOptions) string {
 	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignFieldsParam(opt.CampaignFields))
 	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignMessageFieldsParam(opt.CampaignMessageFields))
 	params = fmt.Sprintf("%s&%s", params, models.BuildTagFieldParam(opt.TagFields))
+	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignIncludeFieldParam(opt.Include))
 
 	if opt.PageCursor != nil {
 		params = fmt.Sprintf("%s&page[cursor]=%s", params, *opt.PageCursor)

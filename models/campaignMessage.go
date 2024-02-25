@@ -133,5 +133,10 @@ func BuildCampaignMessageFieldsParam(fields []CampaignMessageField) string {
 		return ""
 	}
 
-	return strings.ReplaceAll(fmt.Sprintf("fields[campaign-message]=%v", fields), " ", ",")
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("fields[campaign-message]=%s", strings.Join(formattedFields, ","))
 }

@@ -42,6 +42,10 @@ func BuildTagFieldParam(fields []TagField) string {
 	if len(fields) == 0 {
 		return ""
 	}
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
 
-	return strings.ReplaceAll(fmt.Sprintf("fields[tag]=%v", fields), " ", ",")
+	return fmt.Sprintf("fields[tag]=%s", strings.Join(formattedFields, ","))
 }

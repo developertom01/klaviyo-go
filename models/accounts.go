@@ -66,6 +66,11 @@ func BuildAccountFieldsParam(fields []AccountsField) string {
 		return ""
 	}
 
-	return strings.ReplaceAll(fmt.Sprintf("fields[account]=%v", fields), " ", ",")
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("fields[account]=%v", strings.Join(formattedFields, ","))
 
 }
