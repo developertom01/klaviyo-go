@@ -119,7 +119,7 @@ func mockCreateCampaignRequestData() CreateCampaignRequestData {
 				CampaignMessages: CampaignAttributesMessages{
 					Data: []CampaignAttributesMessagesData{{
 						Type: campaignMessageType,
-						Attributes: CampaignAttributesMessagesDataAttributes{
+						Attributes: CreateCampaignMessagesDataAttributes{
 							Channel: "email",
 						},
 					}},
@@ -147,14 +147,6 @@ func mockUpdateCampaignRequestData() UpdateCampaignRequestData {
 				Audiences: &CampaignDataAttributesAudiences{
 					Included: []string{},
 					Excluded: []string{},
-				},
-				CampaignMessages: CampaignAttributesMessages{
-					Data: []CampaignAttributesMessagesData{{
-						Type: campaignMessageType,
-						Attributes: CampaignAttributesMessagesDataAttributes{
-							Channel: "email",
-						},
-					}},
 				},
 			},
 		},

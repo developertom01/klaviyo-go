@@ -1,6 +1,10 @@
 package campaigns
 
-import "github.com/developertom01/klaviyo-go/models"
+import (
+	"encoding/json"
+
+	"github.com/developertom01/klaviyo-go/models"
+)
 
 // Create and Update campaign API request models
 type (
@@ -24,12 +28,11 @@ type (
 	}
 
 	UpdateCampaignDataDataAttributes struct {
-		Name             *string                            `json:"name,omitempty"`             //The campaign name
-		Audiences        *CampaignDataAttributesAudiences   `json:"audiences,omitempty"`        //The audiences to be included and/or excluded from the campaign
-		SendStrategy     *CampaignDataAttributeSendStrategy `json:"send_strategy,omitempty"`    //The send strategy the campaign will send with. Defaults to 'Immediate' send strategy.
-		SendOptions      *SendOptions                       `json:"send_options,omitempty"`     //Options to use when sending a campaign
-		TrackingOptions  *TrackingOptions                   `json:"tracking_options,omitempty"` //The tracking options associated with the campaign
-		CampaignMessages CampaignAttributesMessages         `json:"campaign-messages"`          //The message(s) associated with the campaign
+		Name            *string                            `json:"name,omitempty"`             //The campaign name
+		Audiences       *CampaignDataAttributesAudiences   `json:"audiences,omitempty"`        //The audiences to be included and/or excluded from the campaign
+		SendStrategy    *CampaignDataAttributeSendStrategy `json:"send_strategy,omitempty"`    //The send strategy the campaign will send with. Defaults to 'Immediate' send strategy.
+		SendOptions     *SendOptions                       `json:"send_options,omitempty"`     //Options to use when sending a campaign
+		TrackingOptions *TrackingOptions                   `json:"tracking_options,omitempty"` //The tracking options associated with the campaign
 	}
 
 	CreateCampaignDataDataAttributes struct {
@@ -59,25 +62,15 @@ type (
 	}
 
 	CampaignAttributesMessagesData struct {
-		Type       string                                   `json:"type"`
-		Attributes CampaignAttributesMessagesDataAttributes `json:"attributes"`
+		Type       string                               `json:"type"`
+		Attributes CreateCampaignMessagesDataAttributes `json:"attributes"`
 	}
 
-	CampaignAttributesMessagesDataAttributes struct {
+	CreateCampaignMessagesDataAttributes struct {
 		Channel       string                `json:"channel"`                  //The channel the message is to be sent on (email or sms, for example)
 		Label         *string               `json:"label,omitempty"`          //The label or name on the message
 		Content       *MessageContent       `json:"content,omitempty"`        //Additional attributes relating to the content of the message
 		RenderOptions *MessageRenderOptions `json:"render_options,omitempty"` //Additional options for rendering the message
-	}
-
-	MessageContent struct {
-		Subject      *string `json:"subject,omitempty"`        //The subject of the message
-		PreviewText  *string `json:"preview_text,omitempty"`   //Preview text associated with the message
-		FromEmail    *string `json:"from_email,omitempty"`     //The email the message should be sent from
-		FromLabel    *string `json:"from_label,omitempty"`     //The label associated with the from_email
-		ReplyToEmail *string `json:"reply_to_email,omitempty"` //Optional Reply-To email address
-		CcEmail      *string `json:"cc_email,omitempty"`       //Optional CC email address
-		BccEmail     *string `json:"bcc_email,omitempty"`      //Optional BCC email address
 	}
 
 	MessageRenderOptions struct {
@@ -136,5 +129,114 @@ type (
 
 	CreateCampaignCloneRequestAttributes struct {
 		NewName string `json:"new_name"` //The name for the new cloned campaign
+	}
+)
+
+// --- Update Campaign Message
+type (
+	UpdateCampaignMessagePayload struct {
+		Type       string                          `json:"type"` // campaign-message
+		ID         string                          `json:"id"`   //The message ID to be retrieved
+		Attributes UpdateCampaignMessageAttributes `json:"attributes"`
+	}
+
+	UpdateCampaignMessageAttributes struct {
+		Label         *string               `json:"label,omitempty"`          //The label or name on the message
+		Content       *MessageContent       `json:"content,omitempty"`        //Additional attributes relating to the content of the message
+		RenderOptions *MessageRenderOptions `json:"render_options,omitempty"` //Additional options for rendering the message
+	}
+)
+
+// -------- Message content UNION type
+
+type (
+	//Generic map object that exports IsSMSContent and IsEmailContent
+	MessageContent map[string]any
+
+	MessageEmailContent struct {
+		Subject      *string `json:"subject,omitempty"`        //The subject of the message
+		PreviewText  *string `json:"preview_text,omitempty"`   //Preview text associated with the message
+		FromEmail    *string `json:"from_email,omitempty"`     //The email the message should be sent from
+		FromLabel    *string `json:"from_label,omitempty"`     //The label associated with the from_email
+		ReplyToEmail *string `json:"reply_to_email,omitempty"` //Optional Reply-To email address
+		CcEmail      *string `json:"cc_email,omitempty"`       //Optional CC email address
+
+	}
+
+	MessageSMSContent struct {
+		Body *string `json:"body,omitempty"` //The message body
+	}
+)
+
+// Converts data from `MessageEmailContent` or `MessageSMSContent` to `MessageContent`
+func toMessageContent[T MessageEmailContent | MessageSMSContent](data T) (*MessageContent, error) {
+	dataByte, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	var messageContent MessageContent
+	err = json.Unmarshal(dataByte, &messageContent)
+
+	return &messageContent, err
+}
+
+// Converts to `MessageContent` type
+func (mec MessageEmailContent) ToMessageContent() (*MessageContent, error) {
+	return toMessageContent(mec)
+}
+
+// Converts to `MessageContent` type
+func (msc MessageSMSContent) ToMessageContent() (*MessageContent, error) {
+	return toMessageContent(msc)
+}
+
+// Returns MessageEmailContent and true if MessageContent is email
+func (mc MessageContent) IsEmailContent() (*MessageEmailContent, bool) {
+	byteData, err := json.Marshal(mc)
+	if err != nil {
+		return nil, false
+	}
+
+	var messageEmailContent MessageEmailContent
+	err = json.Unmarshal(byteData, &messageEmailContent)
+	if err != nil {
+		return nil, false
+	}
+
+	return &messageEmailContent, true
+}
+
+// Returns MessageSMSContent and true if MessageContent is sms
+func (mc MessageContent) IsSMSContent() (*MessageSMSContent, bool) {
+	byteData, err := json.Marshal(mc)
+	if err != nil {
+		return nil, false
+	}
+
+	var msgSMSContent MessageSMSContent
+	err = json.Unmarshal(byteData, &msgSMSContent)
+	if err != nil {
+		return nil, false
+	}
+
+	return &msgSMSContent, true
+}
+
+// ----- AssignCampaignMessageTemplate payloads
+
+type (
+	AssignCampaignMessageTemplatePayload struct {
+		Type          string                                     `json:"type"` // campaign-message
+		ID            string                                     `json:"id"`   //The message ID to be assigned to
+		Relationships AssignCampaignMessageTemplateRelationships `json:"relationships"`
+	}
+
+	AssignCampaignMessageTemplateRelationships struct {
+		Template TemplateRelationshipPayload `json:"template"`
+	}
+
+	TemplateRelationshipPayload struct {
+		Data models.RelationshipData // Type should be `template` and ID is the template ID to assign
 	}
 )

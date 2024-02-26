@@ -46,6 +46,9 @@ type (
 
 		//Return all messages that belong to the given campaign.
 		GetCampaignMessages(ctx context.Context, campaignId string, options *GetCampaignMessagesOptions) (*models.CampaignMessageCollectionResponse, error)
+
+		//Campaign Messages API
+		MessagesApi
 	}
 
 	campaignsApi struct {
