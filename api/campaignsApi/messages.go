@@ -19,6 +19,9 @@ type (
 
 		//Update a campaign message
 		UpdateCampaignMessage(ctx context.Context, messageId string, payload UpdateCampaignMessagePayload) (*models.CampaignMessageResponse, error)
+
+		//Creates a non-reusable version of the template and assigns it to the message.
+		AssignCampaignMessageTemplate(ctx context.Context, payload AssignCampaignMessageTemplatePayload) (*models.CampaignMessageResponse, error)
 	}
 )
 
@@ -64,7 +67,7 @@ func (api *campaignsApi) GetCampaignMessage(ctx context.Context, messageId strin
 	return &messageResponse, err
 }
 
-func (api *campaignsApi) UpdateCampaignMessagePayload(ctx context.Context, data CreateCampaignRequestData) (*models.CampaignResponse, error) {
+func (api *campaignsApi) UpdateCampaignMessagePayload(ctx context.Context, data UpdateCampaignMessagePayload) (*models.CampaignResponse, error) {
 	reqData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err

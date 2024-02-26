@@ -26,7 +26,7 @@ func (suit *CampaignsMessageApiTestSuite) SetupTest() {
 	suit.api = NewCampaignsApi(session, suit.mockedClient)
 }
 
-func (suit *CampaignsMessageApiTestSuite) TestGetGetCampaignMessageServerError() {
+func (suit *CampaignsMessageApiTestSuite) TestGetCampaignMessageServerError() {
 	var messageId = "message-id"
 	mockedRespData := common.MockedErrorResponse()
 
@@ -41,7 +41,7 @@ func (suit *CampaignsMessageApiTestSuite) TestGetGetCampaignMessageServerError()
 
 }
 
-func (suit *CampaignsMessageApiTestSuite) TestGetGetCampaignMessageBadRequest() {
+func (suit *CampaignsMessageApiTestSuite) TestGetCampaignMessageBadRequest() {
 	var messageId = "message-id"
 	mockedRespData := common.MockedErrorResponse()
 
@@ -57,7 +57,7 @@ func (suit *CampaignsMessageApiTestSuite) TestGetGetCampaignMessageBadRequest() 
 }
 
 // Test when GetCampaignMessage returns 200 response
-func (suit *CampaignsMessageApiTestSuite) TestGetGetCampaignMessageStatusOk() {
+func (suit *CampaignsMessageApiTestSuite) TestGetCampaignMessageStatusOk() {
 	var messageId = "message-id"
 	mockedRespData := mockCampaignMessageResponse()
 
@@ -76,6 +76,97 @@ func (suit *CampaignsMessageApiTestSuite) TestGetGetCampaignMessageStatusOk() {
 
 	suit.Nil(err)
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
+func (suit *CampaignsMessageApiTestSuite) TestUpdateCampaignMessageServerError() {
+	var messageId = "message-id"
+	reqData := mockUpdateCampaignMessagePayload()
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.UpdateCampaignMessage(context.Background(), messageId, reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+func (suit *CampaignsMessageApiTestSuite) TestUpdateCampaignMessageBadRequest() {
+	var messageId = "message-id"
+	reqData := mockUpdateCampaignMessagePayload()
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.UpdateCampaignMessage(context.Background(), messageId, reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+func (suit *CampaignsMessageApiTestSuite) TestUpdateCampaignMessageStatusOk() {
+	var messageId = "message-id"
+	reqData := mockUpdateCampaignMessagePayload()
+	mockedRespData := mockCampaignMessageResponse()
+
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	res, err := suit.api.UpdateCampaignMessage(context.Background(), messageId, reqData)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
+func (suit *CampaignsMessageApiTestSuite) TestAssignCampaignMessageTemplateStatusOk() {
+	reqData := mockAssignCampaignMessageTemplatePayload()
+	mockedRespData := mockCampaignMessageResponse()
+
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	res, err := suit.api.AssignCampaignMessageTemplate(context.Background(), reqData)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
+func (suit *CampaignsMessageApiTestSuite) TestAssignCampaignMessageTemplateBadRequest() {
+	reqData := mockAssignCampaignMessageTemplatePayload()
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.AssignCampaignMessageTemplate(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsMessageApiTestSuite) TestAssignCampaignMessageTemplateServerError() {
+	reqData := mockAssignCampaignMessageTemplatePayload()
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.AssignCampaignMessageTemplate(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
 func TestCampaignsMessageApiTestSuite(t *testing.T) {

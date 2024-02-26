@@ -214,3 +214,38 @@ func mockCampaignMessageCollectionResponse(n int) models.CampaignMessageCollecti
 	}
 
 }
+
+func mockUpdateCampaignMessagePayload() UpdateCampaignMessagePayload {
+	fake := faker.New()
+
+	smsBody := "text message"
+	smsContent := MessageSMSContent{
+		Body: &smsBody,
+	}
+	msgContent, _ := smsContent.ToMessageContent()
+
+	return UpdateCampaignMessagePayload{
+		Type: "campaign-message",
+		ID:   fake.UUID().V4(),
+		Attributes: UpdateCampaignMessageAttributes{
+			Content: msgContent,
+		},
+	}
+}
+
+func mockAssignCampaignMessageTemplatePayload() AssignCampaignMessageTemplatePayload {
+	fake := faker.New()
+
+	return AssignCampaignMessageTemplatePayload{
+		Type: "campaign-message",
+		ID:   fake.UUID().V4(),
+		Relationships: AssignCampaignMessageTemplateRelationships{
+			Template: TemplateRelationshipPayload{
+				Data: models.RelationshipData{
+					Type: "template",
+					ID:   fake.UUID().V4(),
+				},
+			},
+		},
+	}
+}
