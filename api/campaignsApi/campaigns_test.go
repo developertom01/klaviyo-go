@@ -9,7 +9,6 @@ import (
 	"github.com/developertom01/klaviyo-go/exceptions"
 	"github.com/developertom01/klaviyo-go/models"
 	"github.com/developertom01/klaviyo-go/options"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -29,17 +28,10 @@ func (suit *CampaignsApiTestSuite) SetupTest() {
 
 func (suit *CampaignsApiTestSuite) TestGetCampaignsBadRequest() {
 	mockedRespData := common.MockedErrorResponse()
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 bad request",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	filter := common.NewFilterBuilder().Equal("name", "sam")
 	_, err = suit.api.GetCampaigns(context.Background(), filter.Build(), nil)
@@ -49,17 +41,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignsBadRequest() {
 
 func (suit *CampaignsApiTestSuite) TestGetCampaignsServerError() {
 	mockedRespData := common.MockedErrorResponse()
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadGateway, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 bad Gateway",
-		StatusCode: http.StatusBadGateway,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	filter := common.NewFilterBuilder().Equal("name", "sam")
 	_, err = suit.api.GetCampaigns(context.Background(), filter.Build(), nil)
@@ -69,17 +54,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignsServerError() {
 
 func (suit *CampaignsApiTestSuite) TestGetCampaignsOkResponse() {
 	mockedRespData := mockCampaignCollectionResponse(3)
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "200 ok",
-		StatusCode: http.StatusOK,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	filter := common.NewFilterBuilder().Equal("name", "sam")
 	resp, err := suit.api.GetCampaigns(context.Background(), filter.Build(), nil)
@@ -92,17 +70,10 @@ func (suit *CampaignsApiTestSuite) TestDeleteCampaignsServerError() {
 	var campaignId = "test id2"
 
 	mockedRespData := common.MockedErrorResponse()
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadGateway, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 bad Gateway",
-		StatusCode: http.StatusBadGateway,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	err = suit.api.DeleteCampaigns(context.Background(), campaignId)
 
@@ -113,17 +84,10 @@ func (suit *CampaignsApiTestSuite) TestDeleteCampaignsBadRequest() {
 	var campaignId = "test id"
 
 	mockedRespData := common.MockedErrorResponse()
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 bad Gateway",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	err = suit.api.DeleteCampaigns(context.Background(), campaignId)
 
@@ -134,17 +98,10 @@ func (suit *CampaignsApiTestSuite) TestDeleteCampaignsOkRequest() {
 	var campaignId = "test id"
 
 	mockedRespData := common.MockedErrorResponse()
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusNoContent, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "204 No content",
-		StatusCode: http.StatusNoContent,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	err = suit.api.DeleteCampaigns(context.Background(), campaignId)
 
@@ -155,17 +112,10 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignServerError() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadGateway, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 bad Gateway",
-		StatusCode: http.StatusBadGateway,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.CreateCampaign(context.Background(), reqData)
 
@@ -176,17 +126,10 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignBadRequest() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 bad Request",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.CreateCampaign(context.Background(), reqData)
 
@@ -197,17 +140,10 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignOKRequest() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := mockCampaignResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusCreated, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "201 Created",
-		StatusCode: http.StatusCreated,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	res, err := suit.api.CreateCampaign(context.Background(), reqData)
 
@@ -220,17 +156,10 @@ func (suit *CampaignsApiTestSuite) TestUpdateCampaignsServerError() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadGateway, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 bad Gateway",
-		StatusCode: http.StatusBadGateway,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.UpdateCampaigns(context.Background(), campaignId, reqData)
 
@@ -242,17 +171,10 @@ func (suit *CampaignsApiTestSuite) TestUpdateCampaignsBadRequest() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 bad request",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.UpdateCampaigns(context.Background(), campaignId, reqData)
 
@@ -264,17 +186,7 @@ func (suit *CampaignsApiTestSuite) TestUpdateCampaignsOKRequest() {
 	reqData := mockCreateCampaignRequestData()
 	mockedRespData := mockCampaignResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
-	if err != nil {
-		suit.T().Fatal(err)
-	}
-
-	response := http.Response{
-		Status:     "200 Created",
-		StatusCode: http.StatusOK,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
 
 	res, err := suit.api.UpdateCampaigns(context.Background(), campaignId, reqData)
 
@@ -287,17 +199,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationServerError
 	var campaignId = "123232"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadGateway, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 bad Gateway",
-		StatusCode: http.StatusBadGateway,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignRecipientEstimation(context.Background(), campaignId, nil)
 
@@ -309,18 +214,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationBadRequest(
 	var campaignId = "123232"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 bad Gateway",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
-
 	_, err = suit.api.GetCampaignRecipientEstimation(context.Background(), campaignId, nil)
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
@@ -331,17 +228,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignRecipientEstimationOkStatus() 
 	var campaignId = "test-campaign-1"
 	mockedRespData := mockCampaignResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "200 bad Gateway",
-		StatusCode: http.StatusOK,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	res, err := suit.api.GetCampaignRecipientEstimation(context.Background(), campaignId, nil)
 
@@ -354,17 +244,10 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignCloneServerError() {
 	reqData := mockCreateCampaignCloneRequestDataRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 Server error",
-		StatusCode: http.StatusInternalServerError,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.CreateCampaignClone(context.Background(), reqData)
 
@@ -377,17 +260,10 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignCloneBadRequest() {
 	reqData := mockCreateCampaignCloneRequestDataRequestData()
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 Server error",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.CreateCampaignClone(context.Background(), reqData)
 
@@ -400,17 +276,10 @@ func (suit *CampaignsApiTestSuite) TestCreateCampaignCloneOKRequest() {
 	reqData := mockCreateCampaignCloneRequestDataRequestData()
 	mockedRespData := mockCampaignResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusCreated, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "201 Created",
-		StatusCode: http.StatusCreated,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	res, err := suit.api.CreateCampaignClone(context.Background(), reqData)
 
@@ -423,17 +292,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignBadRequest() {
 	var messageId = "message-id"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 Bad request",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, []models.CampaignsField{models.CampaignsFieldArchived, models.CampaignsFieldAudience_Exclude})
 
@@ -445,17 +307,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignServerError() {
 	var messageId = "message-id"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 Internal Server Error",
-		StatusCode: http.StatusInternalServerError,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignMessageCampaign(context.Background(), messageId, []models.CampaignsField{models.CampaignsFieldArchived, models.CampaignsFieldAudience})
 
@@ -467,17 +322,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignStatusOk() {
 	var messageId = "message-id"
 	mockedRespData := mockCampaignResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusCreated, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "201 Created",
-		StatusCode: http.StatusCreated,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	res, err := suit.api.GetCampaignMessageCampaign(context.Background(), messageId, []models.CampaignsField{models.CampaignsFieldAudience, models.CampaignsFieldAudience_Exclude})
 
@@ -490,17 +338,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessagesBadRequest() {
 	var campaignId = "campaign-id1"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 Created",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignMessages(context.Background(), campaignId, nil)
 
@@ -513,17 +354,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessagesServerError() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 Created",
-		StatusCode: http.StatusInternalServerError,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignMessages(context.Background(), campaignId, nil)
 
@@ -536,17 +370,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessagesStatusOk() {
 	var campaignId = "campaign-id"
 	mockedRespData := mockCampaignMessageCollectionResponse(3)
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "200 Created",
-		StatusCode: http.StatusOK,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	res, err := suit.api.GetCampaignMessages(context.Background(), campaignId, nil)
 
@@ -561,17 +388,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageTemplateServerError() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 Created",
-		StatusCode: http.StatusInternalServerError,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignMessageTemplate(context.Background(), campaignId, nil)
 
@@ -584,17 +404,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageTemplateBadRequest() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "4000 Bad Request",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignMessageTemplate(context.Background(), campaignId, nil)
 
@@ -607,17 +420,11 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageTemplateStatusOk() {
 	var campaignId = "campaign-id"
 	mockedRespData := models.MockTemplateResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
 
-	response := http.Response{
-		Status:     "200 Created",
-		StatusCode: http.StatusOK,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 	res, err := suit.api.GetCampaignMessageTemplate(context.Background(), campaignId, []models.TemplateField{models.TemplateFieldCreatedAt, models.TemplateFieldCreatedAt})
 
 	suit.Nil(err)
@@ -628,17 +435,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignTagsServerError() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "500 Created",
-		StatusCode: http.StatusInternalServerError,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignTags(context.Background(), campaignId, nil)
 
@@ -650,17 +450,10 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignTagsBadRequest() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
-
-	response := http.Response{
-		Status:     "400 Bad Request",
-		StatusCode: http.StatusBadRequest,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 
 	_, err = suit.api.GetCampaignTags(context.Background(), campaignId, nil)
 
@@ -673,17 +466,11 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignTagsStatusOk() {
 	var campaignId = "campaign-id"
 	mockedRespData := models.MockTagsCollectionResponse(3)
 
-	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
 
-	response := http.Response{
-		Status:     "200 Created",
-		StatusCode: http.StatusOK,
-		Body:       bodyResp,
-	}
-	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
 	res, err := suit.api.GetCampaignTags(context.Background(), campaignId, []models.TagField{models.TagFieldName})
 
 	suit.Nil(err)
