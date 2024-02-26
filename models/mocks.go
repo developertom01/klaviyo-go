@@ -21,3 +21,27 @@ func MockTemplateResponse() TemplateResponse {
 		Data: mockTemplate(),
 	}
 }
+
+func mockTag() Tag {
+	fake := faker.New()
+
+	return Tag{
+		Type: "tag",
+		ID:   fake.UUID().V4(),
+		Attributes: TagAttributes{
+			Name: fake.Lorem().Word(),
+		}}
+}
+
+func MockTagsCollectionResponse(n int) TagsCollectionResponse {
+	tagsData := make([]Tag, 0)
+
+	for i := 0; i < n; i++ {
+		tagsData = append(tagsData, mockTag())
+	}
+
+	return TagsCollectionResponse{
+		Data:  tagsData,
+		Links: MockedLinkResponse(),
+	}
+}

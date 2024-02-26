@@ -557,7 +557,7 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessagesStatusOk() {
 // ---- Test GetCampaignMessageTemplate
 
 // Test when GetCampaignMessageTemplate returns 5xx response
-func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateServerError() {
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessageTemplateServerError() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
@@ -580,7 +580,7 @@ func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateServerError(
 }
 
 // Test when GetCampaignMessageTemplate returns 4xx response
-func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateBadRequest() {
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessageTemplateBadRequest() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
@@ -603,7 +603,7 @@ func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateBadRequest()
 }
 
 // Test when GetCampaignMessages returns 200 response
-func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateStatusOk() {
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessageTemplateStatusOk() {
 	var campaignId = "campaign-id"
 	mockedRespData := models.MockTemplateResponse()
 
@@ -622,6 +622,72 @@ func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateStatusOk() {
 
 	suit.Nil(err)
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
+func (suit *CampaignsApiTestSuite) TestGetCampaignTagsServerError() {
+	var campaignId = "campaign-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 Created",
+		StatusCode: http.StatusInternalServerError,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignTags(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+func (suit *CampaignsApiTestSuite) TestGetCampaignTagsBadRequest() {
+	var campaignId = "campaign-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 Bad Request",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignTags(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+// Test when GetCampaignMessages returns 200 response
+func (suit *CampaignsApiTestSuite) TestGetCampaignTagsStatusOk() {
+	var campaignId = "campaign-id"
+	mockedRespData := models.MockTagsCollectionResponse(3)
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "200 Created",
+		StatusCode: http.StatusOK,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+	res, err := suit.api.GetCampaignTags(context.Background(), campaignId, []models.TagField{models.TagFieldName})
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data[0].ID, res.Data[0].ID)
 }
 
 func TestCampaignsApiTestSuite(t *testing.T) {

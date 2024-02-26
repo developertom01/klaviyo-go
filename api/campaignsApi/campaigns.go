@@ -286,6 +286,7 @@ func (api *campaignsApi) GetCampaignMessageTemplate(ctx context.Context, message
 	return &template, err
 }
 
+// -- Untested
 func (api *campaignsApi) GetCampaignTags(ctx context.Context, campaignId string, tagFields []models.TagField) (*models.TagsCollectionResponse, error) {
 	var params = models.BuildTagFieldParam(tagFields)
 
