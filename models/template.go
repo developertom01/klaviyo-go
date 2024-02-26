@@ -6,9 +6,13 @@ import (
 )
 
 type (
-	TemplateResponse struct {
+	TemplateCollectionResponse struct {
 		Data  []Template `json:"data"`
 		Links Links      `json:"links"`
+	}
+
+	TemplateResponse struct {
+		Data Template `json:"data"`
 	}
 
 	Template struct {

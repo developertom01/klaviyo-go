@@ -40,9 +40,12 @@ type (
 		GetCampaignMessageCampaign(ctx context.Context, messageId string, campaignFields []models.CampaignsField) (*models.CampaignResponse, error)
 
 		//Return the related template for `messageId`
-		GetCampaignMessageTemplate(ctx context.Context, messageId string, templateFields []models.TemplateField) (*models.Template, error)
+		GetCampaignMessageTemplate(ctx context.Context, messageId string, templateFields []models.TemplateField) (*models.TemplateResponse, error)
 		//Return all tags that belong to the given campaign.
 		GetCampaignTags(ctx context.Context, campaignId string, tagFields []models.TagField) (*models.TagsCollectionResponse, error)
+
+		//Return all messages that belong to the given campaign.
+		GetCampaignMessages(ctx context.Context, campaignId string, options *GetCampaignMessagesOptions) (*models.CampaignMessageCollectionResponse, error)
 	}
 
 	campaignsApi struct {
@@ -263,7 +266,7 @@ func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, message
 	return &campaignResp, err
 }
 
-func (api *campaignsApi) GetCampaignMessageTemplate(ctx context.Context, messageId string, templateFields []models.TemplateField) (*models.Template, error) {
+func (api *campaignsApi) GetCampaignMessageTemplate(ctx context.Context, messageId string, templateFields []models.TemplateField) (*models.TemplateResponse, error) {
 	var params = models.BuildTemplateFieldParam(templateFields)
 	url := fmt.Sprintf("%s/api/campaign-messages/%s/template/?%s", api.baseApiUrl, messageId, params)
 
@@ -277,7 +280,7 @@ func (api *campaignsApi) GetCampaignMessageTemplate(ctx context.Context, message
 		return nil, errors.Join(getCampaignsApiCallError, err)
 	}
 
-	var template models.Template
+	var template models.TemplateResponse
 	err = json.Unmarshal(byteData, &template)
 
 	return &template, err
@@ -306,17 +309,31 @@ func (api *campaignsApi) GetCampaignTags(ctx context.Context, campaignId string,
 
 // Query parameters for GetCampaignMessages
 type GetCampaignMessagesOptions struct {
-	campaignMessageFieldParam []models.CampaignMessageField
-	campaignFieldsParam       []models.CampaignSortField
+	campaignMessageField []models.CampaignMessageField
+	campaignFields       []models.CampaignsField
+	templateFields       []models.TemplateField
+	Include              []models.CampaignMessageIncludeField
 }
 
-func (api *campaignsApi) GetCampaignMessages(ctx context.Context, campaignId string, tagsFieldParams *string) (*models.TagsCollectionResponse, error) {
+func buildGetCampaignMessagesParams(opt *GetCampaignMessagesOptions) string {
 	var params = ""
-	if tagsFieldParams == nil {
-		params = *tagsFieldParams
+
+	if opt == nil {
+		return params
 	}
 
-	url := fmt.Sprintf("%s/api/campaigns/%s/tags/?%s", api.baseApiUrl, campaignId, params)
+	params = fmt.Sprintf("%s", models.BuildCampaignMessageFieldsParam(opt.campaignMessageField))
+	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignFieldsParam(opt.campaignFields))
+	params = fmt.Sprintf("%s&%s", params, models.BuildTemplateFieldParam(opt.templateFields))
+	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignMessageIncludeFieldParam(opt.Include))
+
+	return params
+}
+
+func (api *campaignsApi) GetCampaignMessages(ctx context.Context, campaignId string, options *GetCampaignMessagesOptions) (*models.CampaignMessageCollectionResponse, error) {
+	var params = buildGetCampaignMessagesParams(options)
+
+	url := fmt.Sprintf("%s/api/campaigns/%s/campaign-messages/?%s", api.baseApiUrl, campaignId, params)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -328,8 +345,8 @@ func (api *campaignsApi) GetCampaignMessages(ctx context.Context, campaignId str
 		return nil, errors.Join(getCampaignsApiCallError, err)
 	}
 
-	var tags models.TagsCollectionResponse
-	err = json.Unmarshal(byteData, &tags)
+	var msg models.CampaignMessageCollectionResponse
+	err = json.Unmarshal(byteData, &msg)
 
-	return &tags, err
+	return &msg, err
 }

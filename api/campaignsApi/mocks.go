@@ -1,6 +1,7 @@
 package campaigns
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/developertom01/klaviyo-go/models"
@@ -172,4 +173,46 @@ func mockCreateCampaignCloneRequestDataRequestData() CreateCampaignCloneRequestD
 			},
 		},
 	}
+}
+
+func mockCampaignMessage() models.CampaignMessage {
+	fake := faker.New()
+
+	var emailSubject = fake.Lorem().Sentence(20)
+	var contentEmail = fake.Lorem().Sentence(20)
+	emailContent := models.MessageEmailContent{
+		Subject:   &emailSubject,
+		FromEmail: &contentEmail,
+	}
+
+	emailContentByte, _ := json.Marshal(emailContent)
+	var messageContent models.MessageContent
+	json.Unmarshal(emailContentByte, &messageContent)
+
+	return models.CampaignMessage{
+		Type: "campaign-message",
+		ID:   fake.UUID().V4(),
+		Attributes: models.CampaignMessageAttributes{
+			Label:         fake.Lorem().Word(),
+			Channel:       "email",
+			Content:       messageContent,
+			RenderOptions: models.MessageRenderOptions{},
+			SendTimes:     []models.SendTime{},
+			CreatedAt:     time.Now().Format(time.RFC1123),
+			UpdatedAt:     time.Now().Format(time.RFC1123),
+		},
+	}
+}
+
+func mockCampaignMessageCollectionResponse(n int) models.CampaignMessageCollectionResponse {
+	data := make([]models.CampaignMessage, 0)
+	for i := 0; i < n; i++ {
+		data = append(data, mockCampaignMessage())
+	}
+
+	return models.CampaignMessageCollectionResponse{
+		Data:  data,
+		Links: models.MockedLinkResponse(),
+	}
+
 }

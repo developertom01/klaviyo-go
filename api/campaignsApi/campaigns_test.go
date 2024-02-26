@@ -485,6 +485,145 @@ func (suit *CampaignsApiTestSuite) TestGetCampaignMessageCampaignStatusOk() {
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
 
+// Test when GetCampaignMessages returns 4xx response
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessagesBadRequest() {
+	var campaignId = "campaign-id1"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "400 Created",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignMessages(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+// Test when GetCampaignMessages returns 5xx response
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessagesServerError() {
+	var campaignId = "campaign-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 Created",
+		StatusCode: http.StatusInternalServerError,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignMessages(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+// Test when GetCampaignMessages returns 200 response
+func (suit *CampaignsApiTestSuite) TestGetCampaignMessagesStatusOk() {
+	var campaignId = "campaign-id"
+	mockedRespData := mockCampaignMessageCollectionResponse(3)
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "200 Created",
+		StatusCode: http.StatusOK,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	res, err := suit.api.GetCampaignMessages(context.Background(), campaignId, nil)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data[0].ID, res.Data[0].ID)
+}
+
+// ---- Test GetCampaignMessageTemplate
+
+// Test when GetCampaignMessageTemplate returns 5xx response
+func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateServerError() {
+	var campaignId = "campaign-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "500 Created",
+		StatusCode: http.StatusInternalServerError,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignMessageTemplate(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+// Test when GetCampaignMessageTemplate returns 4xx response
+func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateBadRequest() {
+	var campaignId = "campaign-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "4000 Bad Request",
+		StatusCode: http.StatusBadRequest,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+
+	_, err = suit.api.GetCampaignMessageTemplate(context.Background(), campaignId, nil)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+
+}
+
+// Test when GetCampaignMessages returns 200 response
+func (suit *CampaignsApiTestSuite) TestGetGetCampaignMessageTemplateStatusOk() {
+	var campaignId = "campaign-id"
+	mockedRespData := models.MockTemplateResponse()
+
+	bodyResp, err := common.PrepareMockResponse(mockedRespData)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	response := http.Response{
+		Status:     "200 Created",
+		StatusCode: http.StatusOK,
+		Body:       bodyResp,
+	}
+	suit.mockedClient.On("Do", mock.Anything).Return(&response, nil)
+	res, err := suit.api.GetCampaignMessageTemplate(context.Background(), campaignId, []models.TemplateField{models.TemplateFieldCreatedAt, models.TemplateFieldCreatedAt})
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
 func TestCampaignsApiTestSuite(t *testing.T) {
 	suite.Run(t, new(CampaignsApiTestSuite))
 

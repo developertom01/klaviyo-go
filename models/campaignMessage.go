@@ -39,7 +39,13 @@ func (cms *CampaignMessageIncludedUnionType) GetTemplate() (*Template, bool) {
 type (
 	CampaignMessageResponse struct {
 		Data     CampaignMessage                    `json:"data"`
-		Included []CampaignMessageIncludedUnionType `json:"included"` //This can either be array of Template or Campaign object.
+		Included []CampaignMessageIncludedUnionType `json:"included,omitempty"` //This can either be array of Template or Campaign object.
+	}
+
+	CampaignMessageCollectionResponse struct {
+		Data     []CampaignMessage                  `json:"data"`
+		Links    Links                              `json:"links"`
+		Included []CampaignMessageIncludedUnionType `json:"included,omitempty"` //This can either be array of Template or Campaign object.
 	}
 
 	CampaignMessageIncluded struct {
@@ -139,4 +145,25 @@ func BuildCampaignMessageFieldsParam(fields []CampaignMessageField) string {
 	}
 
 	return fmt.Sprintf("fields[campaign-message]=%s", strings.Join(formattedFields, ","))
+}
+
+type CampaignMessageIncludeField string
+
+const (
+	CampaignMessageIncludeFieldCampaign CampaignMessageIncludeField = "campaign"
+	CampaignMessageIncludeFieldTemplate CampaignMessageIncludeField = "template"
+)
+
+func BuildCampaignMessageIncludeFieldParam(fields []CampaignMessageIncludeField) string {
+	if len(fields) == 0 {
+		return ""
+	}
+
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("includes=%s", strings.Join(formattedFields, ","))
+
 }
