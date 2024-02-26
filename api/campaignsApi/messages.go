@@ -97,7 +97,7 @@ func (api *campaignsApi) UpdateCampaignMessage(ctx context.Context, messageId st
 	}
 
 	reqDataBuffer := bytes.NewBuffer(reqData)
-	req, err := http.NewRequest(http.MethodPost, url, reqDataBuffer)
+	req, err := http.NewRequest(http.MethodPatch, url, reqDataBuffer)
 	if err != nil {
 		return nil, err
 	}

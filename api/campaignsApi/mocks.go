@@ -196,6 +196,12 @@ func mockCampaignMessage() models.CampaignMessage {
 	}
 }
 
+func mockCampaignMessageResponse() models.CampaignMessageResponse {
+	return models.CampaignMessageResponse{
+		Data: mockCampaignMessage(),
+	}
+}
+
 func mockCampaignMessageCollectionResponse(n int) models.CampaignMessageCollectionResponse {
 	data := make([]models.CampaignMessage, 0)
 	for i := 0; i < n; i++ {
