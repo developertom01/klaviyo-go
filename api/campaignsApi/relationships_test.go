@@ -68,7 +68,7 @@ func (suit *CampaignsJobsApiTestSuite) TestGetCampaignMessageRelationshipsCampai
 	res, err := suit.api.GetCampaignMessageRelationshipsCampaign(context.Background(), messageId)
 
 	suit.Nil(err)
-	suit.Equal(mockedRespData, res)
+	suit.Equal(mockedRespData, *res)
 }
 
 func TestCampaignsRelationshipsApiTestSuite(t *testing.T) {
