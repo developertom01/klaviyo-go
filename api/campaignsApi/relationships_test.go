@@ -116,9 +116,9 @@ func (suit *CampaignsJobsApiTestSuite) TestGetCampaignMessageRelationshipsTempla
 	suit.Equal(mockedRespData, *res)
 }
 
-//----- Test GetCampaignRelationshipsRelationships
+//----- Test GetCampaignRelationshipsTags
 
-func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsRelationshipsBadRequest() {
+func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsTagsBadRequest() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
@@ -127,12 +127,12 @@ func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsRelationships
 		suit.T().Fatal(err)
 	}
 
-	_, err = suit.api.GetCampaignRelationshipsRelationships(context.Background(), campaignId)
+	_, err = suit.api.GetCampaignRelationshipsTags(context.Background(), campaignId)
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
-func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsRelationshipsServerError() {
+func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsTagsServerError() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
 
@@ -141,21 +141,66 @@ func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsRelationships
 		suit.T().Fatal(err)
 	}
 
-	_, err = suit.api.GetCampaignRelationshipsRelationships(context.Background(), campaignId)
+	_, err = suit.api.GetCampaignRelationshipsTags(context.Background(), campaignId)
 
 	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
 }
 
-func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsRelationshipsCampaignStatusOK() {
-	var messageId = "message-id"
-	mockedRespData := models.MockRelationshipDataCollectionResponse("templates", 3)
+func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsTagsCampaignStatusOK() {
+	var campaignId = "campaign-id"
+	mockedRespData := models.MockRelationshipDataCollectionResponse("tags", 3)
 
 	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
 	if err != nil {
 		suit.T().Fatal(err)
 	}
 
-	res, err := suit.api.GetCampaignRelationshipsRelationships(context.Background(), messageId)
+	res, err := suit.api.GetCampaignRelationshipsTags(context.Background(), campaignId)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData, *res)
+}
+
+//----- Test GetCampaignRelationshipsCampaignMessages
+
+func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsCampaignMessagesBadRequest() {
+	var campaignId = "campaign-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.GetCampaignRelationshipsCampaignMessages(context.Background(), campaignId)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsCampaignMessagesServerError() {
+	var campaignId = "campaign-id"
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusBadGateway, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.GetCampaignRelationshipsCampaignMessages(context.Background(), campaignId)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRelationshipsCampaignMessagesStatusOK() {
+	var campaignId = "campaign-id"
+	mockedRespData := models.MockRelationshipDataCollectionResponse("campaign-messages", 3)
+
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	res, err := suit.api.GetCampaignRelationshipsCampaignMessages(context.Background(), campaignId)
 
 	suit.Nil(err)
 	suit.Equal(mockedRespData, *res)

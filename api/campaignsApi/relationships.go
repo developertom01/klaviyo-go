@@ -19,7 +19,7 @@ type CampaignRelationshipsAPi interface {
 	GetCampaignMessageRelationshipsTemplate(ctx context.Context, messageId string) (*models.RelationshipData, error)
 
 	//Returns the IDs of all tags associated with the given campaign. [`type`: tag, `id`: tag ID]
-	GetCampaignRelationshipsRelationships(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error)
+	GetCampaignRelationshipsTags(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error)
 
 	//Returns the IDs of all messages associated with the given campaign. [`type`: campaign-messages, `id`: message ID]
 	GetCampaignRelationshipsCampaignMessages(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error)
@@ -63,7 +63,7 @@ func (api *campaignsApi) GetCampaignMessageRelationshipsTemplate(ctx context.Con
 	return &res, err
 }
 
-func (api *campaignsApi) GetCampaignRelationshipsRelationships(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error) {
+func (api *campaignsApi) GetCampaignRelationshipsTags(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error) {
 	url := fmt.Sprintf("%s/api/campaigns/%s/relationships/tags/", api.baseApiUrl, campaignId)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
