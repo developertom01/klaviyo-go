@@ -251,5 +251,4 @@ func (suit *CampaignsJobsApiTestSuite) TestCreateCampaignRecipientEstimationJobS
 
 func TestCampaignsJobsApiTestSuite(t *testing.T) {
 	suite.Run(t, new(CampaignsJobsApiTestSuite))
-
 }

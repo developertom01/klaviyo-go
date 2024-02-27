@@ -45,3 +45,12 @@ func MockTagsCollectionResponse(n int) TagsCollectionResponse {
 		Links: MockedLinkResponse(),
 	}
 }
+
+func MockRelationshipData(rType string) RelationshipData {
+	fake := faker.New()
+
+	return RelationshipData{
+		Type: rType,
+		ID:   fake.UUID().V4(),
+	}
+}
