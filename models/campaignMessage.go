@@ -6,36 +6,6 @@ import (
 	"strings"
 )
 
-type CampaignMessageIncludedUnionType map[string]any
-
-func (cms *CampaignMessageIncludedUnionType) GetCampaign() (*Campaign, bool) {
-	data, err := json.Marshal(cms)
-	if err != nil {
-		return nil, false
-	}
-
-	var campaign Campaign
-	if err = json.Unmarshal(data, &campaign); err != nil {
-		return nil, false
-	}
-
-	return &campaign, true
-}
-
-func (cms *CampaignMessageIncludedUnionType) GetTemplate() (*Template, bool) {
-	data, err := json.Marshal(cms)
-	if err != nil {
-		return nil, false
-	}
-
-	var template Template
-	if err = json.Unmarshal(data, &template); err != nil {
-		return nil, false
-	}
-
-	return &template, true
-}
-
 type (
 	CampaignMessageResponse struct {
 		Data     CampaignMessage                    `json:"data"`
@@ -166,4 +136,34 @@ func BuildCampaignMessageIncludeFieldParam(fields []CampaignMessageIncludeField)
 
 	return fmt.Sprintf("includes=%s", strings.Join(formattedFields, ","))
 
+}
+
+type CampaignMessageIncludedUnionType map[string]any
+
+func (cms *CampaignMessageIncludedUnionType) GetCampaign() (*Campaign, bool) {
+	data, err := json.Marshal(cms)
+	if err != nil {
+		return nil, false
+	}
+
+	var campaign Campaign
+	if err = json.Unmarshal(data, &campaign); err != nil {
+		return nil, false
+	}
+
+	return &campaign, true
+}
+
+func (cms *CampaignMessageIncludedUnionType) GetTemplate() (*Template, bool) {
+	data, err := json.Marshal(cms)
+	if err != nil {
+		return nil, false
+	}
+
+	var template Template
+	if err = json.Unmarshal(data, &template); err != nil {
+		return nil, false
+	}
+
+	return &template, true
 }
