@@ -267,3 +267,15 @@ func mockCampaignJobResponse() models.CampaignSendJobResponse {
 		Data: mockCampaignJob(),
 	}
 }
+
+func mockUpdateCampaignSendJobPayload() UpdateCampaignSendJobPayload {
+	fake := faker.New()
+
+	return UpdateCampaignSendJobPayload{
+		ID:   fake.UUID().V4(),
+		Type: "campaign-send-job",
+		Attribute: UpdateCampaignAttribute{
+			Action: UpdateCampaignActionCancel,
+		},
+	}
+}
