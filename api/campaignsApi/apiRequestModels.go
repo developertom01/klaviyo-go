@@ -240,3 +240,36 @@ type (
 		Data models.RelationshipData // Type should be `template` and ID is the template ID to assign
 	}
 )
+
+// ----- Update Campaign Send Job payloads
+
+type (
+	UpdateCampaignSendJobPayload struct {
+		ID        string                  `json:"id"`   //The ID of the currently sending campaign to cancel or revert
+		Type      string                  `json:"type"` // campaign-send-job
+		Attribute UpdateCampaignAttribute `json:"attribute"`
+	}
+
+	UpdateCampaignAttribute struct {
+		Action UpdateCampaignAction `json:"action"` //The action you would like to take with this send job from among 'cancel' and 'revert'
+	}
+
+	// 'cancel' and 'revert'
+	UpdateCampaignAction string
+)
+
+const (
+	UpdateCampaignActionCancel UpdateCampaignAction = "cancel"
+	UpdateCampaignActionRevert UpdateCampaignAction = "revert"
+)
+
+// ----- Create Campaign Send Job payloads
+
+type CreateCampaignSendJobPayload struct {
+	Type string `json:"type"` // campaign-send-job
+	ID   string `json:"id"`   //The ID of the campaign to send
+}
+
+type CreateCampaignRecipientEstimationJobPayload struct {
+	CreateCampaignSendJobPayload
+}
