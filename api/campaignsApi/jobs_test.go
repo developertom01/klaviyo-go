@@ -25,6 +25,8 @@ func (suit *CampaignsJobsApiTestSuite) SetupTest() {
 	suit.api = NewCampaignsApi(session, suit.mockedClient)
 }
 
+// ------ Test GetCampaignSendJob
+
 func (suit *CampaignsJobsApiTestSuite) TestGetCampaignSendJobServerError() {
 	mockedRespData := common.MockedErrorResponse()
 
@@ -64,6 +66,8 @@ func (suit *CampaignsJobsApiTestSuite) TestGetCampaignSendJobStatusOk() {
 	suit.Nil(err)
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
+
+// ------ Test UpdateCampaignSendJob
 
 func (suit *CampaignsJobsApiTestSuite) TestUpdateCampaignSendJobServerError() {
 	var jobId = "job-id"
@@ -111,6 +115,8 @@ func (suit *CampaignsJobsApiTestSuite) TestUpdateCampaignSendJobStatusOk() {
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
 
+// ------ Test GetCampaignRecipientEstimationJob
+
 func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRecipientEstimationJobBadRequest() {
 	var campaignId = "campaign-id"
 	mockedRespData := common.MockedErrorResponse()
@@ -153,6 +159,8 @@ func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRecipientEstimationJobStat
 	suit.Nil(err)
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
+
+// ------ Test CreateCampaignSendJob
 
 func (suit *CampaignsJobsApiTestSuite) TestCreateCampaignSendJobServerError() {
 	reqData := mockCampaignSendCreationJobPayload()
