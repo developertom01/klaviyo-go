@@ -54,3 +54,14 @@ func MockRelationshipData(rType string) RelationshipData {
 		ID:   fake.UUID().V4(),
 	}
 }
+
+func MockRelationshipDataCollectionResponse(rType string, n int) RelationshipDataCollectionResponse {
+	relationships := make([]RelationshipData, 0)
+	for i := 0; i < n; i++ {
+		relationships = append(relationships, MockRelationshipData(rType))
+	}
+
+	return RelationshipDataCollectionResponse{
+		Data: relationships,
+	}
+}
