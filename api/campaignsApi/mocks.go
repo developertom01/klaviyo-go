@@ -182,7 +182,7 @@ func mockCampaignMessage() models.CampaignMessage {
 	json.Unmarshal(emailContentByte, &messageContent)
 
 	return models.CampaignMessage{
-		Type: "campaign-message",
+		Type: campaignMessageType,
 		ID:   fake.UUID().V4(),
 		Attributes: models.CampaignMessageAttributes{
 			Label:         fake.Lorem().Word(),
@@ -225,7 +225,7 @@ func mockUpdateCampaignMessagePayload() UpdateCampaignMessagePayload {
 	msgContent, _ := smsContent.ToMessageContent()
 
 	return UpdateCampaignMessagePayload{
-		Type: "campaign-message",
+		Type: campaignMessageType,
 		ID:   fake.UUID().V4(),
 		Attributes: UpdateCampaignMessageAttributes{
 			Content: msgContent,
@@ -237,7 +237,7 @@ func mockAssignCampaignMessageTemplatePayload() AssignCampaignMessageTemplatePay
 	fake := faker.New()
 
 	return AssignCampaignMessageTemplatePayload{
-		Type: "campaign-message",
+		Type: campaignMessageType,
 		ID:   fake.UUID().V4(),
 		Relationships: AssignCampaignMessageTemplateRelationships{
 			Template: TemplateRelationshipPayload{
@@ -247,5 +247,23 @@ func mockAssignCampaignMessageTemplatePayload() AssignCampaignMessageTemplatePay
 				},
 			},
 		},
+	}
+}
+
+func mockCampaignJob() models.CampaignSendJob {
+	fake := faker.New()
+
+	return models.CampaignSendJob{
+		Type: "campaign-send-job",
+		ID:   fake.UUID().V4(),
+		Attributes: models.CampaignSendJobAttributes{
+			Status: models.CampaignSendJobStatusCompleted,
+		},
+	}
+}
+
+func mockCampaignJobResponse() models.CampaignSendJobResponse {
+	return models.CampaignSendJobResponse{
+		Data: mockCampaignJob(),
 	}
 }

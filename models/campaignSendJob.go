@@ -18,7 +18,7 @@ type (
 	}
 
 	CampaignSendJobAttributes struct {
-		status CampaignSendJobStatus //The status of the send job. [`cancelled` `complete` `processing` `queued`]
+		Status CampaignSendJobStatus `json:"status"` //The status of the send job. [`cancelled` `complete` `processing` `queued`]
 	}
 
 	//The status of the send job
