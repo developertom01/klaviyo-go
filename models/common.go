@@ -55,6 +55,10 @@ type (
 		ID   string `json:"id"`
 	}
 
+	RelationshipDataCollectionResponse struct {
+		Data []RelationshipData `json:"data"`
+	}
+
 	RelationshipLinks struct {
 		Self    string `json:"self"`
 		Related string `json:"related"`

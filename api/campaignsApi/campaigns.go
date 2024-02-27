@@ -52,6 +52,9 @@ type (
 
 		//Campaign Send Jobs API
 		CampaignJobsApi
+
+		//Relationships API
+		CampaignRelationshipsAPi
 	}
 
 	campaignsApi struct {

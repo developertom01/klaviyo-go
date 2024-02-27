@@ -67,30 +67,6 @@ func (api *campaignsApi) GetCampaignMessage(ctx context.Context, messageId strin
 	return &messageResponse, err
 }
 
-func (api *campaignsApi) UpdateCampaignMessagePayload(ctx context.Context, data UpdateCampaignMessagePayload) (*models.CampaignResponse, error) {
-	reqData, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	reqDataBuffer := bytes.NewBuffer(reqData)
-
-	req, err := http.NewRequest(http.MethodPost, api.baseApiUrl, reqDataBuffer)
-	if err != nil {
-		return nil, err
-	}
-
-	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
-	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
-	}
-
-	var resp models.CampaignResponse
-	err = json.Unmarshal(byteData, &resp)
-
-	return &resp, err
-}
-
 func (api *campaignsApi) UpdateCampaignMessage(ctx context.Context, messageId string, payload UpdateCampaignMessagePayload) (*models.CampaignMessageResponse, error) {
 	url := fmt.Sprintf("%s/api/campaign-messages/%s/", api.baseApiUrl, messageId)
 
