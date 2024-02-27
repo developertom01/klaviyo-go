@@ -265,11 +265,7 @@ const (
 
 // ----- Create Campaign Send Job payloads
 
-type CreateCampaignSendJobPayload struct {
+type CampaignSendCreationJobPayload struct {
 	Type string `json:"type"` // campaign-send-job
 	ID   string `json:"id"`   //The ID of the campaign to send
-}
-
-type CreateCampaignRecipientEstimationJobPayload struct {
-	CreateCampaignSendJobPayload
 }

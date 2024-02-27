@@ -24,13 +24,13 @@ type CampaignJobsApi interface {
 	GetCampaignRecipientEstimationJob(ctx context.Context, campaignId string, jobFields []models.CampaignSendJobField) (*models.CampaignSendJobResponse, error)
 
 	//Permanently cancel the campaign, setting the status to CANCELED or revert the campaign, setting the status back to DRAFT
-	CreateCampaignSendJob(ctx context.Context, payload CreateCampaignSendJobPayload) (*models.CampaignSendJobResponse, error)
+	CreateCampaignSendJob(ctx context.Context, payload CampaignSendCreationJobPayload) (*models.CampaignSendJobResponse, error)
 
 	//Trigger an asynchronous job to update the estimated number of recipients
 	//for the given campaign ID. Use the `GetCampaignRecipientEstimationJob` method or Get Campaign Recipient Estimation Job endpoint to retrieve the status of this estimation job. Use the
 	//Get Campaign Recipient Estimation endpoint to retrieve the estimated
 	//recipient count for a given campaign.
-	CreateCampaignRecipientEstimationJob(ctx context.Context, payload CreateCampaignRecipientEstimationJobPayload) (*models.CampaignSendJobResponse, error)
+	CreateCampaignRecipientEstimationJob(ctx context.Context, payload CampaignSendCreationJobPayload) (*models.CampaignSendJobResponse, error)
 }
 
 func (api *campaignsApi) GetCampaignSendJob(ctx context.Context, jobFields []models.CampaignSendJobField) (*models.CampaignSendJobResponse, error) {
@@ -96,7 +96,7 @@ func (api *campaignsApi) GetCampaignRecipientEstimationJob(ctx context.Context, 
 	return &jobResp, err
 }
 
-func (api campaignsApi) CreateCampaignSendJob(ctx context.Context, payload CreateCampaignSendJobPayload) (*models.CampaignSendJobResponse, error) {
+func (api campaignsApi) CreateCampaignSendJob(ctx context.Context, payload CampaignSendCreationJobPayload) (*models.CampaignSendJobResponse, error) {
 	url := fmt.Sprintf("%s/api/campaign-send-jobs/", api.baseApiUrl)
 
 	reqData, err := json.Marshal(payload)
@@ -121,7 +121,7 @@ func (api campaignsApi) CreateCampaignSendJob(ctx context.Context, payload Creat
 	return &resp, err
 }
 
-func (api campaignsApi) CreateCampaignRecipientEstimationJob(ctx context.Context, payload CreateCampaignRecipientEstimationJobPayload) (*models.CampaignSendJobResponse, error) {
+func (api campaignsApi) CreateCampaignRecipientEstimationJob(ctx context.Context, payload CampaignSendCreationJobPayload) (*models.CampaignSendJobResponse, error) {
 	url := fmt.Sprintf("%s/api/campaign-recipient-estimation-jobs/", api.baseApiUrl)
 
 	reqData, err := json.Marshal(payload)
