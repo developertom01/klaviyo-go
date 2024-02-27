@@ -3,13 +3,15 @@ package klaviyo
 import (
 	accounts "github.com/developertom01/klaviyo-go/api/accountsApi"
 	campaigns "github.com/developertom01/klaviyo-go/api/campaignsApi"
+	flows "github.com/developertom01/klaviyo-go/api/flowsApi"
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/options"
 )
 
 type KlaviyoApi struct {
-	Accounts  accounts.AccountsApi
-	Campaigns campaigns.CampaignsApi
+	Accounts  accounts.AccountsApi   //Accounts API
+	Campaigns campaigns.CampaignsApi //Campaigns API
+	Flows     flows.FlowsApi         //Flows API
 }
 
 func NewKlaviyoApi(apiKey string, retryOption *common.RetryOptions) *KlaviyoApi {
@@ -19,5 +21,6 @@ func NewKlaviyoApi(apiKey string, retryOption *common.RetryOptions) *KlaviyoApi 
 	return &KlaviyoApi{
 		Accounts:  accounts.NewAccountsApi(session, nil),
 		Campaigns: campaigns.NewCampaignsApi(session, nil),
+		Flows:     flows.NewFlowsApi(session, nil),
 	}
 }

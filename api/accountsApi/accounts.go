@@ -36,7 +36,7 @@ func NewAccountsApi(session common.Session, httpClient common.HTTPClient) Accoun
 	}
 	return &accountApi{
 		session:    session,
-		baseApiUrl: fmt.Sprintf("%s/api/campaigns", common.BASE_URL),
+		baseApiUrl: common.BASE_URL,
 		revision:   common.API_REVISION,
 		httpClient: client,
 	}
@@ -45,7 +45,7 @@ func NewAccountsApi(session common.Session, httpClient common.HTTPClient) Accoun
 func (api *accountApi) getAccountsInternal(ctx context.Context, accountFields []models.AccountsField) (*models.AccountsCollectionResponse, error) {
 
 	var fieldsParam = models.BuildAccountFieldsParam(accountFields)
-	url := fmt.Sprintf("%s/?%s", api.baseApiUrl, fieldsParam)
+	url := fmt.Sprintf("%s/api/accounts/?%s", api.baseApiUrl, fieldsParam)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -72,7 +72,7 @@ func (api *accountApi) GetAccounts(ctx context.Context, accountFields []models.A
 func (api *accountApi) GetAccount(ctx context.Context, id string, accountFields []models.AccountsField) (*models.AccountResponse, error) {
 
 	var fieldsParam = models.BuildAccountFieldsParam(accountFields)
-	url := fmt.Sprintf("%s/%s/?%s", api.baseApiUrl, id, fieldsParam)
+	url := fmt.Sprintf("%s/api/accounts/%s/?%s", api.baseApiUrl, id, fieldsParam)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
