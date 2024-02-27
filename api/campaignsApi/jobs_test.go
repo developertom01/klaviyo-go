@@ -154,6 +154,49 @@ func (suit *CampaignsJobsApiTestSuite) TestGetCampaignRecipientEstimationJobStat
 	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
 }
 
+func (suit *CampaignsJobsApiTestSuite) TestCreateCampaignSendJobServerError() {
+	reqData := mockCreateCampaignSendJobPayload()
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusInternalServerError, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.CreateCampaignSendJob(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsJobsApiTestSuite) TestCreateCampaignSendJobBadRequest() {
+	reqData := mockCreateCampaignSendJobPayload()
+	mockedRespData := common.MockedErrorResponse()
+
+	err := common.PrepareMockResponse(http.StatusBadRequest, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	_, err = suit.api.CreateCampaignSendJob(context.Background(), reqData)
+
+	suit.ErrorAs(err, &exceptions.ErrorResponse{}, nil)
+}
+
+func (suit *CampaignsJobsApiTestSuite) TestCreateCampaignSendJobStatusOk() {
+	reqData := mockCreateCampaignSendJobPayload()
+	mockedRespData := mockCampaignJobResponse()
+
+	err := common.PrepareMockResponse(http.StatusOK, mockedRespData, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	res, err := suit.api.CreateCampaignSendJob(context.Background(), reqData)
+
+	suit.Nil(err)
+	suit.Equal(mockedRespData.Data.ID, res.Data.ID)
+}
+
 func TestCampaignsJobsApiTestSuite(t *testing.T) {
 	suite.Run(t, new(CampaignsJobsApiTestSuite))
 

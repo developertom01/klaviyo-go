@@ -279,3 +279,12 @@ func mockUpdateCampaignSendJobPayload() UpdateCampaignSendJobPayload {
 		},
 	}
 }
+
+func mockCreateCampaignSendJobPayload() CreateCampaignSendJobPayload {
+	fake := faker.New()
+
+	return CreateCampaignSendJobPayload{
+		ID:   fake.UUID().V4(),
+		Type: "campaign-send-job",
+	}
+}
