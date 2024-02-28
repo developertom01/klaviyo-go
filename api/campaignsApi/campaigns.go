@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/models"
@@ -84,26 +85,37 @@ type GetCampaignsOptions struct {
 }
 
 func buildGetCampaignsParams(filter string, opt *GetCampaignsOptions) string {
-	var params = filter
-
 	if opt == nil {
-		return params
+		return ""
 	}
 
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignFieldsParam(opt.CampaignFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignMessageFieldsParam(opt.CampaignMessageFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildTagFieldParam(opt.TagFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignIncludeFieldParam(opt.Include))
+	var params = []string{filter}
+
+	if opt.CampaignFields != nil {
+		params = append(params, models.BuildCampaignFieldsParam(opt.CampaignFields))
+	}
+
+	if opt.CampaignMessageFields != nil {
+		params = append(params, models.BuildCampaignMessageFieldsParam(opt.CampaignMessageFields))
+	}
+
+	if opt.TagFields != nil {
+		params = append(params, models.BuildTagFieldParam(opt.TagFields))
+	}
+
+	if opt.Include != nil {
+		params = append(params, models.BuildCampaignIncludeFieldParam(opt.Include))
+	}
 
 	if opt.PageCursor != nil {
-		params = fmt.Sprintf("%s&page[cursor]=%s", params, *opt.PageCursor)
+		params = append(params, fmt.Sprintf("page[cursor]=%s", *opt.PageCursor))
 	}
 
 	if opt.Sort != nil {
-		params = fmt.Sprintf("%s&sort=%s", params, *opt.Sort)
+		params = append(params, fmt.Sprintf("sort=%s", *opt.Sort))
 	}
 
-	return params
+	return strings.Join(params, "&")
 }
 
 func (api *campaignsApi) GetCampaigns(ctx context.Context, filter string, options *GetCampaignsOptions) (*models.CampaignsCollectionResponse, error) {
@@ -326,18 +338,27 @@ type GetCampaignMessagesOptions struct {
 }
 
 func buildGetCampaignMessagesParams(opt *GetCampaignMessagesOptions) string {
-	var params = ""
 
 	if opt == nil {
-		return params
+		return ""
 	}
 
-	params = fmt.Sprintf("%s", models.BuildCampaignMessageFieldsParam(opt.campaignMessageField))
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignFieldsParam(opt.campaignFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildTemplateFieldParam(opt.templateFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignMessageIncludeFieldParam(opt.Include))
+	var params = make([]string, 0)
 
-	return params
+	if opt.campaignMessageField != nil {
+		params = append(params, models.BuildCampaignMessageFieldsParam(opt.campaignMessageField))
+	}
+	if opt.campaignFields != nil {
+		params = append(params, models.BuildCampaignFieldsParam(opt.campaignFields))
+	}
+	if opt.campaignFields != nil {
+		params = append(params, models.BuildTemplateFieldParam(opt.templateFields))
+	}
+	if opt.campaignFields != nil {
+		params = append(params, models.BuildCampaignMessageIncludeFieldParam(opt.Include))
+	}
+
+	return strings.Join(params, "&")
 }
 
 func (api *campaignsApi) GetCampaignMessages(ctx context.Context, campaignId string, options *GetCampaignMessagesOptions) (*models.CampaignMessageCollectionResponse, error) {

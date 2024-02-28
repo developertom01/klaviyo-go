@@ -10,6 +10,18 @@ import (
 // ---- Flow
 
 type (
+	FlowCollectionResource struct {
+		Data  []Flow `json:"data"`
+		Links Links  `json:"links"`
+		// Array of type Tag | FlowAction. FlowIncludesUnionType exports isTag and isFlowAction methods
+		Included []FlowIncludesUnionType `json:"included,omitempty"`
+	}
+
+	FlowResource struct {
+		Data     Flow                    `json:"data"`
+		Included []FlowIncludesUnionType `json:"included,omitempty"`
+	}
+
 	Flow struct {
 		Type       string         `json:"type"` //flow
 		ID         string         `json:"id"`
@@ -18,23 +30,30 @@ type (
 
 	FlowAttributes struct {
 		Name          *string                      `json:"name,omitempty"`
-		Status        *string                      `json:"status,omitempty"`
+		Status        *FlowsStatus                 `json:"status,omitempty"`
 		Archived      *bool                        `json:"archived,omitempty"`
 		CreatedAt     *time.Time                   `json:"created_at,omitempty"`
 		UpdatedAt     *time.Time                   `json:"updated_at,omitempty"`
 		TriggerType   *FlowTriggerType             `json:"trigger_type,omitempty"` //Corresponds to the object which triggered the flow. [`Added to List` `Date Based` `Low Inventory` `Metric` `Price Drop` `Unconfigured`]
 		Links         DataLinks                    `json:"links"`
 		RelationShips *FlowAttributesRelationShips `json:"relationships,omitempty"`
-		// Array of type Tag | FlowAction. FlowIncludesUnionType exports isTag and isFlowAction methods
-		Includes []FlowIncludesUnionType `json:"includes,omitempty"`
 	}
 
 	FlowTriggerType string //[`Added to List` `Date Based` `Low Inventory` `Metric` `Price Drop` `Unconfigured`]
+
+	// ['draft', 'manual', or 'live']
+	FlowsStatus string
 
 	FlowAttributesRelationShips struct {
 		FlowAction Relationships `json:"flow-actions"`
 		Tags       Relationships `json:"tags"`
 	}
+)
+
+const (
+	FlowsStatusDraft  FlowsStatus = "draft"
+	FlowsStatusManual FlowsStatus = "manual"
+	FlowsStatusLive   FlowsStatus = "live"
 )
 
 const (

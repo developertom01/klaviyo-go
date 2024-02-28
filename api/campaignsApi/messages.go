@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/developertom01/klaviyo-go/common"
 	"github.com/developertom01/klaviyo-go/models"
@@ -33,18 +34,28 @@ type GetCampaignMessageOptions struct {
 }
 
 func buildGetCampaignMessageParams(opt *GetCampaignMessageOptions) string {
-	var params = ""
-
 	if opt == nil {
-		return params
+		return ""
+	}
+	var params = make([]string, 0)
+
+	if opt.CampaignFields != nil {
+		params = append(params, models.BuildCampaignFieldsParam(opt.CampaignFields))
 	}
 
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignFieldsParam(opt.CampaignFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignMessageFieldsParam(opt.CampaignMessageFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildTemplateFieldParam(opt.TemplateFields))
-	params = fmt.Sprintf("%s&%s", params, models.BuildCampaignIncludeFieldParam(opt.Include))
+	if opt.CampaignMessageFields != nil {
+		params = append(params, models.BuildCampaignMessageFieldsParam(opt.CampaignMessageFields))
+	}
 
-	return params
+	if opt.TemplateFields != nil {
+		params = append(params, models.BuildTemplateFieldParam(opt.TemplateFields))
+	}
+
+	if opt.Include != nil {
+		params = append(params, models.BuildCampaignIncludeFieldParam(opt.Include))
+	}
+
+	return strings.Join(params, "&")
 }
 
 func (api *campaignsApi) GetCampaignMessage(ctx context.Context, messageId string, options *GetCampaignMessageOptions) (*models.CampaignMessageResponse, error) {
