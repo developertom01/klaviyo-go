@@ -105,14 +105,18 @@ func (fi FlowIncludesUnionType) IsFlowAction() (*FlowAction, bool) {
 // ---- FlowAction
 
 type (
+	FlowActionResource struct {
+		Data  FlowAction `json:"data"`
+		Links Links      `json:"links"`
+		// Array of type Flow | FlowMessage. FlowIncludesUnionType exports IsFlow and IsFlowMessage methods
+		Includes []FlowActionIncludesUnionType `json:"includes"`
+	}
 	FlowAction struct {
 		Type          string                   `json:"type"` //flow-action
 		ID            string                   `json:"id"`
 		Attributes    FlowActionAttribute      `json:"attribute"`
 		Links         DataLinks                `json:"links"`
 		Relationships *FlowActionRelationships `json:"relationships,omitempty"`
-		// Array of type Flow | FlowMessage. FlowIncludesUnionType exports IsFlow and IsFlowMessage methods
-		Includes []FlowActionIncludesUnionType `json:"includes"`
 	}
 
 	FlowActionAttribute struct {
@@ -284,4 +288,28 @@ func BuildFlowActionFieldsParam(fields []FlowActionField) string {
 	}
 
 	return fmt.Sprintf("fields[flow-action]=%s", strings.Join(formattedFields, ","))
+}
+
+// ---- FlowMessageField
+type FlowMessageField string
+
+const (
+	FlowMessageFieldName    FlowMessageField = "name"
+	FlowMessageFieldChanel  FlowMessageField = "chanel"
+	FlowMessageFieldContent FlowMessageField = "content"
+	FlowMessageFieldCreated FlowMessageField = "created"
+	FlowMessageFieldUpdated FlowMessageField = "updated"
+)
+
+func BuildFlowMessageFieldsParam(fields []FlowMessageField) string {
+	if len(fields) == 0 {
+		return ""
+	}
+
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("fields[flow-message]=%s", strings.Join(formattedFields, ","))
 }

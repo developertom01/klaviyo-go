@@ -24,7 +24,9 @@ type (
 
 		//Update the status of a flow with the given flow ID, and all actions in that flow.
 		UpdateFlowStatus(ctx context.Context, flowId string, payload UpdateFlowStatusPayload) (*models.FlowResource, error)
-	}
+
+		//Get a flow action from a flow with the given flow action ID.
+		GetFlowAction(ctx context.Context, flowId string, opt *GetFlowActionOptions) (*models.FlowActionResource, error)	}
 
 	flowsApi struct {
 		session    common.Session
@@ -67,10 +69,23 @@ func buildGetFlowsOptionsQueryParams(filter *string, opt *GetFlowsOptions) strin
 	if filter != nil {
 		params = append(params, *filter)
 	}
-	params = append(params, models.BuildFlowActionFieldsParam(opt.FlowActionFields))
-	params = append(params, models.BuildFlowFieldsParam(opt.FlowFields))
-	params = append(params, models.BuildTagFieldParam(opt.TagFields))
-	params = append(params, buildFlowsIncludeFieldParam(opt.Include))
+
+	if opt.FlowActionFields != nil {
+		params = append(params, models.BuildFlowActionFieldsParam(opt.FlowActionFields))
+	}
+
+	if opt.FlowFields != nil {
+		params = append(params, models.BuildFlowFieldsParam(opt.FlowFields))
+	}
+
+	if opt.TagFields != nil {
+		params = append(params, models.BuildTagFieldParam(opt.TagFields))
+
+	}
+
+	if opt.Include != nil {
+		params = append(params, buildIncludeFieldParam(opt.Include))
+	}
 
 	return strings.Join(params, "&")
 }
@@ -161,4 +176,58 @@ func (api *flowsApi) UpdateFlowStatus(ctx context.Context, flowId string, payloa
 	err = json.Unmarshal(byteData, &flow)
 
 	return &flow, err
+}
+
+type GetFlowActionOptions struct {
+	FlowActionFields []models.FlowActionField
+	FlowFields       []models.FlowField
+	FlowMessageField []models.FlowMessageField
+	Include          []FlowsActionIncludeField
+}
+
+func buildGetFlowActionOptionsQueryParams(opt *GetFlowActionOptions) string {
+	if opt == nil {
+		return ""
+	}
+
+	var params = make([]string, 0)
+
+	if opt.FlowActionFields != nil {
+		params = append(params, models.BuildFlowActionFieldsParam(opt.FlowActionFields))
+	}
+
+	if opt.FlowFields != nil {
+		params = append(params, models.BuildFlowFieldsParam(opt.FlowFields))
+	}
+
+	if opt.FlowMessageField != nil {
+		params = append(params, models.BuildFlowMessageFieldsParam(opt.FlowMessageField))
+
+	}
+
+	if opt.Include != nil {
+		params = append(params, buildIncludeFieldParam(opt.Include))
+	}
+
+	return strings.Join(params, "&")
+}
+
+func (api flowsApi) GetFlowAction(ctx context.Context, flowId string, opt *GetFlowActionOptions) (*models.FlowActionResource, error) {
+	params := buildGetFlowActionOptionsQueryParams(opt)
+	url := fmt.Sprintf("%s/api/flows-actions/%s?%s", api.baseApiUrl, flowId, params)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, errors.Join(getFlowsApiCallError, err)
+	}
+
+	var flowAction models.FlowActionResource
+	err = json.Unmarshal(byteData, &flowAction)
+
+	return &flowAction, err
 }

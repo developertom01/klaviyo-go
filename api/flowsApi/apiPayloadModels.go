@@ -10,11 +10,18 @@ import (
 type FlowsIncludeField string
 
 const (
-	FlowsIncludeFieldFlowActions = "flow-actions"
-	FlowsIncludeFieldTags        = "tags"
+	FlowsIncludeFieldFlowActions FlowsIncludeField = "flow-actions"
+	FlowsIncludeFieldTags        FlowsIncludeField = "tags"
 )
 
-func buildFlowsIncludeFieldParam(fields []FlowsIncludeField) string {
+type FlowsActionIncludeField string
+
+const (
+	FlowsActionIncludeFieldFlow        FlowsActionIncludeField = "flow"
+	FlowsActionIncludeFieldFlowMessage FlowsActionIncludeField = "flow-message"
+)
+
+func buildIncludeFieldParam[T FlowsIncludeField | FlowsActionIncludeField](fields []T) string {
 	if len(fields) == 0 {
 		return ""
 	}
@@ -74,4 +81,3 @@ type (
 		Status models.FlowsStatus `json:"status"` //Status you want to update the flow to. ['draft', 'manual', or 'live']
 	}
 )
-
