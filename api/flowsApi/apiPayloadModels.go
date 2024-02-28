@@ -10,11 +10,18 @@ import (
 type FlowsIncludeField string
 
 const (
-	FlowsIncludeFieldFlowActions = "flow-actions"
-	FlowsIncludeFieldTags        = "tags"
+	FlowsIncludeFieldFlowActions FlowsIncludeField = "flow-actions"
+	FlowsIncludeFieldTags        FlowsIncludeField = "tags"
 )
 
-func buildFlowsIncludeFieldParam(fields []FlowsIncludeField) string {
+type FlowsActionIncludeField string
+
+const (
+	FlowsActionIncludeFieldFlow        FlowsActionIncludeField = "flow"
+	FlowsActionIncludeFieldFlowMessage FlowsActionIncludeField = "flow-message"
+)
+
+func buildIncludeFieldParam[T FlowsIncludeField | FlowsActionIncludeField | FlowMessageIncludeFieldParam](fields []T) string {
 	if len(fields) == 0 {
 		return ""
 	}
@@ -54,7 +61,7 @@ const (
 	FlowSortFieldUpdatedDESC FlowSortField = "-updated"
 )
 
-func buildFlowSortFieldParam(sField *FlowSortField) string {
+func buildFlowSortFieldParam[T FlowSortField | FlowActionSortField | FlowActionMessageSortField](sField *T) string {
 	if sField == nil {
 		return ""
 	}
@@ -75,3 +82,110 @@ type (
 	}
 )
 
+//---- FlowMessageIncludeFieldParam
+
+type FlowMessageIncludeFieldParam string
+
+const (
+	FlowMessageIncludeFieldParamFlowAction FlowMessageIncludeFieldParam = "flow-action"
+	FlowMessageIncludeFieldParamTemplate   FlowMessageIncludeFieldParam = "template"
+)
+
+// ---- FlowActionSortField
+
+type FlowActionSortField string
+
+const (
+	FlowActionSortFieldActionTypeASC  FlowActionSortField = "action_type"
+	FlowActionSortFieldActionTypeDESC FlowActionSortField = "-action_type"
+
+	FlowActionSortFieldCreatedASC  FlowActionSortField = "created"
+	FlowActionSortFieldCreatedDESC FlowActionSortField = "-created"
+
+	FlowActionSortFieldCreatedIdASC  FlowActionSortField = "id"
+	FlowActionSortFieldCreatedIdDESC FlowActionSortField = "-id"
+
+	FlowActionSortFieldUpdatedASC  FlowActionSortField = "updated"
+	FlowActionSortFieldUpdatedDESC FlowActionSortField = "-updated"
+
+	FlowActionSortFieldStatusASC  FlowActionSortField = "status"
+	FlowActionSortFieldStatusDESC FlowActionSortField = "-status"
+)
+
+// ---- FlowPaginationOptions
+type FlowActionPaginationOptions struct {
+	PageSize *int    //Default: 50. Min: 1. Max: 50.
+	Cursor   *string //For more information please visit
+	Sort     *FlowActionSortField
+}
+
+func buildGetFlowActionsPaginationOptionsQueryParams(opt *FlowActionPaginationOptions) string {
+	if opt == nil {
+		return ""
+	}
+	var params = make([]string, 0)
+
+	if opt.PageSize == nil {
+		pageSize := 50
+		opt.PageSize = &pageSize
+	}
+
+	params = append(params, fmt.Sprintf("page[size]=%d", *opt.PageSize))
+
+	if opt.Sort != nil {
+		params = append(params, buildFlowSortFieldParam(opt.Sort))
+	}
+
+	if opt.Cursor != nil {
+		params = append(params, fmt.Sprintf("page[cursor]=%s", *opt.Cursor))
+	}
+
+	return strings.Join(params, "&")
+}
+
+type FlowActionMessageSortField string
+
+const (
+	FlowActionMessageSortFieldIdASC  = "id"
+	FlowActionMessageSortFieldIdDESC = "-id"
+
+	FlowActionMessageSortFieldNameASC  = "name"
+	FlowActionMessageSortFieldNameDESC = "-name"
+
+	FlowActionMessageSortFieldCreatedASC  = "created"
+	FlowActionMessageSortFieldCreatedDESC = "-created"
+
+	FlowActionMessageSortFieldUpdatedASC  = "updated"
+	FlowActionMessageSortFieldUpdatedDESC = "-updated"
+)
+
+// ---- FlowPaginationOptions
+type FlowActionMessagePaginationOptions struct {
+	PageSize *int    //Default: 50. Min: 1. Max: 50.
+	Cursor   *string //For more information please visit
+	Sort     *FlowActionMessageSortField
+}
+
+func buildFlowActionMessagePaginationOptionsQueryParams(opt *FlowActionMessagePaginationOptions) string {
+	if opt == nil {
+		return ""
+	}
+	var params = make([]string, 0)
+
+	if opt.PageSize == nil {
+		pageSize := 50
+		opt.PageSize = &pageSize
+	}
+
+	params = append(params, fmt.Sprintf("page[size]=%d", *opt.PageSize))
+
+	if opt.Sort != nil {
+		params = append(params, buildFlowSortFieldParam(opt.Sort))
+	}
+
+	if opt.Cursor != nil {
+		params = append(params, fmt.Sprintf("page[cursor]=%s", *opt.Cursor))
+	}
+
+	return strings.Join(params, "&")
+}

@@ -23,20 +23,21 @@ type (
 	}
 
 	Flow struct {
-		Type       string         `json:"type"` //flow
-		ID         string         `json:"id"`
-		Attributes FlowAttributes `json:"attributes"`
+		Type          string             `json:"type"` //flow
+		ID            string             `json:"id"`
+		Attributes    FlowAttributes     `json:"attributes"`
+		Links         DataLinks          `json:"links"`
+		RelationShips *FlowRelationShips `json:"relationships,omitempty"`
 	}
 
 	FlowAttributes struct {
-		Name          *string                      `json:"name,omitempty"`
-		Status        *FlowsStatus                 `json:"status,omitempty"`
-		Archived      *bool                        `json:"archived,omitempty"`
-		CreatedAt     *time.Time                   `json:"created_at,omitempty"`
-		UpdatedAt     *time.Time                   `json:"updated_at,omitempty"`
-		TriggerType   *FlowTriggerType             `json:"trigger_type,omitempty"` //Corresponds to the object which triggered the flow. [`Added to List` `Date Based` `Low Inventory` `Metric` `Price Drop` `Unconfigured`]
-		Links         DataLinks                    `json:"links"`
-		RelationShips *FlowAttributesRelationShips `json:"relationships,omitempty"`
+		Name        *string          `json:"name,omitempty"`
+		Status      *FlowsStatus     `json:"status,omitempty"`
+		Archived    *bool            `json:"archived,omitempty"`
+		CreatedAt   *time.Time       `json:"created_at,omitempty"`
+		UpdatedAt   *time.Time       `json:"updated_at,omitempty"`
+		TriggerType *FlowTriggerType `json:"trigger_type,omitempty"` //Corresponds to the object which triggered the flow. [`Added to List` `Date Based` `Low Inventory` `Metric` `Price Drop` `Unconfigured`]
+		Links       DataLinks        `json:"links"`
 	}
 
 	FlowTriggerType string //[`Added to List` `Date Based` `Low Inventory` `Metric` `Price Drop` `Unconfigured`]
@@ -44,7 +45,7 @@ type (
 	// ['draft', 'manual', or 'live']
 	FlowsStatus string
 
-	FlowAttributesRelationShips struct {
+	FlowRelationShips struct {
 		FlowAction Relationships `json:"flow-actions"`
 		Tags       Relationships `json:"tags"`
 	}
@@ -105,14 +106,24 @@ func (fi FlowIncludesUnionType) IsFlowAction() (*FlowAction, bool) {
 // ---- FlowAction
 
 type (
+	FlowActionResource struct {
+		Data  FlowAction `json:"data"`
+		Links DataLinks  `json:"links"`
+		// Array of type Flow | FlowMessage. FlowIncludesUnionType exports IsFlow and IsFlowMessage methods
+		Includes []FlowActionIncludesUnionType `json:"includes"`
+	}
+
+	FlowActionCollectionResource struct {
+		Data  []FlowAction `json:"data"`
+		Links Links        `json:"links"`
+	}
+
 	FlowAction struct {
 		Type          string                   `json:"type"` //flow-action
 		ID            string                   `json:"id"`
 		Attributes    FlowActionAttribute      `json:"attribute"`
 		Links         DataLinks                `json:"links"`
 		Relationships *FlowActionRelationships `json:"relationships,omitempty"`
-		// Array of type Flow | FlowMessage. FlowIncludesUnionType exports IsFlow and IsFlowMessage methods
-		Includes []FlowActionIncludesUnionType `json:"includes"`
 	}
 
 	FlowActionAttribute struct {
@@ -173,11 +184,27 @@ func (actionIncludes FlowActionIncludesUnionType) IsFlowMessage() (*FlowMessage,
 // ---- FlowMessage
 
 type (
+	FlowMessageResource struct {
+		Data     FlowMessage                    `json:"data"`
+		Included []FlowMessageIncludedUnionType `json:"includes,omitempty"`
+	}
+
+	FlowActionMessageCollectionResource struct {
+		Data  []FlowMessage `json:"data"`
+		Links Links         `json:"links"`
+	}
+
 	FlowMessage struct {
-		Type       string                        `json:"type"` //flow-message
-		ID         string                        `json:"id"`
-		Attributes FlowMessageAttributes         `json:"attributes"`
-		Includes   []FlowMessageIncludeUnionType `json:"includes,omitempty"`
+		Type          string                   `json:"type"` //flow-message
+		ID            string                   `json:"id"`
+		Attributes    FlowMessageAttributes    `json:"attributes"`
+		Links         DataLinks                `json:"links"`
+		Relationships FlowMessageRelationships `json:"relationships"`
+	}
+
+	FlowMessageRelationships struct {
+		FlowAction RelationshipData `json:"flow-action"`
+		Template   Relationships    `json:"template"`
 	}
 
 	FlowMessageAttributes struct {
@@ -191,10 +218,10 @@ type (
 
 // ---- FlowMessageIncludeUnionType
 
-type FlowMessageIncludeUnionType map[string]any
+type FlowMessageIncludedUnionType map[string]any
 
 // Returns pointer to FlowAction and true if instance is FlowActon
-func (un FlowMessageIncludeUnionType) IsFlowAction() (*FlowAction, bool) {
+func (un FlowMessageIncludedUnionType) IsFlowAction() (*FlowAction, bool) {
 	byteData, err := json.Marshal(un)
 	if err != nil {
 		return nil, false
@@ -211,7 +238,7 @@ func (un FlowMessageIncludeUnionType) IsFlowAction() (*FlowAction, bool) {
 }
 
 // Returns pointer to Template and true if instance is Template
-func (un FlowMessageIncludeUnionType) IsTemplate() (*Template, bool) {
+func (un FlowMessageIncludedUnionType) IsTemplate() (*Template, bool) {
 	byteData, err := json.Marshal(un)
 	if err != nil {
 		return nil, false
@@ -285,3 +312,45 @@ func BuildFlowActionFieldsParam(fields []FlowActionField) string {
 
 	return fmt.Sprintf("fields[flow-action]=%s", strings.Join(formattedFields, ","))
 }
+
+// ---- FlowMessageField
+type FlowMessageField string
+
+const (
+	FlowMessageFieldName    FlowMessageField = "name"
+	FlowMessageFieldChanel  FlowMessageField = "chanel"
+	FlowMessageFieldContent FlowMessageField = "content"
+	FlowMessageFieldCreated FlowMessageField = "created"
+	FlowMessageFieldUpdated FlowMessageField = "updated"
+)
+
+func BuildFlowMessageFieldsParam(fields []FlowMessageField) string {
+	if len(fields) == 0 {
+		return ""
+	}
+
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("fields[flow-message]=%s", strings.Join(formattedFields, ","))
+}
+
+// FlowTags
+
+type (
+	FlowTagCollectionResource struct {
+		Data          []Tag                `json:"data"`
+		Links         Links                `json:"links"`
+		Relationships FlowTagRelationships `json:"relationships"`
+	}
+
+	FlowTagRelationships struct {
+		TagGroup  Relationships `json:"tag-group"`
+		List      Relationships `json:"list"`
+		Segment   Relationships `json:"segment"`
+		Campaigns Relationships `json:"relationships"`
+		Flows     Relationships `json:"flows"`
+	}
+)

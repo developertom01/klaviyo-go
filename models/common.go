@@ -186,3 +186,9 @@ func MockedLinkResponse() Links {
 	}
 
 }
+
+type PaginationOptionsParam interface {
+	GetPageSize() int
+	GetCursor() *string
+	GetSortField() *string
+}
