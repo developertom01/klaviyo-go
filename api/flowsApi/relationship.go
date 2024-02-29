@@ -21,16 +21,16 @@ type (
 		GetFlowRelationshipsTags(ctx context.Context, flowId string) (*models.RelationshipDataCollectionResponse, error)
 
 		//Get the flow associated with the given action ID.
-		GetFlowActionRelationshipsFlow(ctx context.Context, flowActionId string) (*models.Relationships, error)
+		GetFlowActionRelationshipsFlow(ctx context.Context, flowActionId string) (*models.RelationshipData, error)
 
 		//Get all relationships for flow messages associated with the given flow action ID.
 		GetFlowActionRelationshipsMessages(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionMessagePaginationOptions) (*models.RelationshipDataCollectionResponse, error)
 
 		//Get the relationship for a flow message's flow action, given the flow ID.
-		GetFlowMessageRelationshipsAction(ctx context.Context, flowMessageId string) (*models.Relationships, error)
+		GetFlowMessageRelationshipsAction(ctx context.Context, flowMessageId string) (*models.RelationshipData, error)
 
 		//Returns the ID of the related template
-		GetFlowMessageRelationshipsTemplate(ctx context.Context, flowMessageId string, templateFields []models.TemplateField) (*models.Template, error)
+		GetFlowMessageRelationshipsTemplate(ctx context.Context, flowMessageId string, templateFields []models.TemplateField) (*models.TemplateResponse, error)
 	}
 )
 
@@ -82,7 +82,7 @@ func (api *flowsApi) GetFlowRelationshipsTags(ctx context.Context, flowId string
 	return &relationships, err
 }
 
-func (api *flowsApi) GetFlowActionRelationshipsFlow(ctx context.Context, flowActionId string) (*models.Relationships, error) {
+func (api *flowsApi) GetFlowActionRelationshipsFlow(ctx context.Context, flowActionId string) (*models.RelationshipData, error) {
 	url := fmt.Sprintf("%s/api/flow-actions/%s/relationships/flow/", api.baseApiUrl, flowActionId)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -95,7 +95,7 @@ func (api *flowsApi) GetFlowActionRelationshipsFlow(ctx context.Context, flowAct
 		return nil, errors.Join(getFlowsApiCallError, err)
 	}
 
-	var relationships models.Relationships
+	var relationships models.RelationshipData
 	err = json.Unmarshal(byteData, &relationships)
 
 	return &relationships, err
@@ -130,7 +130,7 @@ func (api *flowsApi) GetFlowActionRelationshipsMessages(ctx context.Context, flo
 	return &relationships, err
 }
 
-func (api *flowsApi) GetFlowMessageRelationshipsAction(ctx context.Context, flowMessageId string) (*models.Relationships, error) {
+func (api *flowsApi) GetFlowMessageRelationshipsAction(ctx context.Context, flowMessageId string) (*models.RelationshipData, error) {
 	url := fmt.Sprintf("%s/api/flow-actions/%s/relationships/flow/", api.baseApiUrl, flowMessageId)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -143,13 +143,13 @@ func (api *flowsApi) GetFlowMessageRelationshipsAction(ctx context.Context, flow
 		return nil, errors.Join(getFlowsApiCallError, err)
 	}
 
-	var relationships models.Relationships
+	var relationships models.RelationshipData
 	err = json.Unmarshal(byteData, &relationships)
 
 	return &relationships, err
 }
 
-func (api *flowsApi) GetFlowMessageRelationshipsTemplate(ctx context.Context, flowMessageId string, templateFields []models.TemplateField) (*models.Template, error) {
+func (api *flowsApi) GetFlowMessageRelationshipsTemplate(ctx context.Context, flowMessageId string, templateFields []models.TemplateField) (*models.TemplateResponse, error) {
 	var params = ""
 
 	templateFieldsParam := models.BuildTemplateFieldParam(templateFields)
@@ -169,7 +169,7 @@ func (api *flowsApi) GetFlowMessageRelationshipsTemplate(ctx context.Context, fl
 		return nil, errors.Join(getFlowsApiCallError, err)
 	}
 
-	var template models.Template
+	var template models.TemplateResponse
 	err = json.Unmarshal(byteData, &template)
 
 	return &template, err
