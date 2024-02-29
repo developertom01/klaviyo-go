@@ -63,4 +63,5 @@ func (api *imageApi) UploadImage(ctx context.Context, file *os.File, payload Upl
 
 	// Close the multipart writer
 	writer.Close()
+	panic("")
 }
