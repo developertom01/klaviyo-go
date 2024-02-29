@@ -28,11 +28,7 @@ This SDK is organized into the following resources:
 
 ## Usage Example
 
-- Initialization
-
  ```go
- var apiKey = "api-key"
-    //Initialize options
  var apiKey = "test-key"
 
  opt := options.NewOptionsWithDefaultValues().WithApiKey(apiKey)
