@@ -46,6 +46,9 @@ type (
 
 		//Get the flow action for a flow message with the given message ID.
 		GetFlowActionForMessage(ctx context.Context, actionMessageId string, flowActionFields []models.FlowActionField) (*models.FlowActionResource, error)
+
+		// Flows Relationship API
+		FlowRelationshipsApi
 	}
 
 	flowsApi struct {
@@ -394,7 +397,7 @@ func (api *flowsApi) GetFlowActionMessages(ctx context.Context, flowActionId str
 		params = append(params, paginationParams)
 	}
 
-	url := fmt.Sprintf("%s/api/flow-actions/%s/flow-messages/%s", api.baseApiUrl, flowActionId, params)
+	url := fmt.Sprintf("%s/api/flow-actions/%s/flow-messages/%s", api.baseApiUrl, flowActionId, strings.Join(params, "&"))
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
