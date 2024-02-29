@@ -67,13 +67,13 @@ func mockCampaignsData() models.Campaign {
 			SendStrategy: models.SendStrategy{
 				Method: models.SendStrategyMethodImmediate,
 				OptionsSto: &models.OptionsSto{
-					Date: time.Now().Format(time.RFC3339),
+					Date: time.Now(),
 				},
 			},
-			CreatedAt:   time.Now().Format(time.RFC3339),
-			ScheduledAt: time.Now().Format(time.RFC3339),
-			UpdatedAt:   time.Now().Format(time.RFC3339),
-			SendTime:    time.Now().Format(time.RFC3339),
+			CreatedAt:   time.Now(),
+			ScheduledAt: time.Now(),
+			UpdatedAt:   time.Now(),
+			SendTime:    time.Now(),
 		},
 		Links: models.DataLinks{
 			Self: fake.Internet().URL(),
@@ -109,7 +109,7 @@ func mockCreateCampaignRequestData() CreateCampaignRequestData {
 				SendStrategy: &CampaignDataAttributeSendStrategy{
 					Method: models.SendStrategyMethodSmartSendTime,
 					OptionsSto: OptionsSto{
-						Date: time.Now().Format(time.RFC822),
+						Date: time.Now(),
 					},
 				},
 				Audiences: CampaignDataAttributesAudiences{
@@ -141,7 +141,7 @@ func mockUpdateCampaignRequestData() UpdateCampaignRequestData {
 				SendStrategy: &CampaignDataAttributeSendStrategy{
 					Method: models.SendStrategyMethodSmartSendTime,
 					OptionsSto: OptionsSto{
-						Date: time.Now().Format(time.RFC822),
+						Date: time.Now(),
 					},
 				},
 				Audiences: &CampaignDataAttributesAudiences{
@@ -190,8 +190,8 @@ func mockCampaignMessage() models.CampaignMessage {
 			Content:       messageContent,
 			RenderOptions: models.MessageRenderOptions{},
 			SendTimes:     []models.SendTime{},
-			CreatedAt:     time.Now().Format(time.RFC1123),
-			UpdatedAt:     time.Now().Format(time.RFC1123),
+			CreatedAt:     time.Now(),
+			UpdatedAt:     time.Now(),
 		},
 	}
 }
@@ -288,5 +288,3 @@ func mockCampaignSendCreationJobPayload() CampaignSendCreationJobPayload {
 		Type: "campaign-send-job",
 	}
 }
-
-

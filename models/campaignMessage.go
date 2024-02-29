@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type (
@@ -16,32 +17,6 @@ type (
 		Data     []CampaignMessage                  `json:"data"`
 		Links    Links                              `json:"links"`
 		Included []CampaignMessageIncludedUnionType `json:"included,omitempty"` //This can either be array of Template or Campaign object.
-	}
-
-	CampaignMessageIncluded struct {
-		Type       string                            `json:"type"`
-		ID         string                            `json:"id"`
-		Attributes CampaignMessageIncludedAttributes `json:"attributes"`
-		Links      DataLinks                         `json:"links"`
-	}
-
-	CampaignMessageIncludedAttributes struct {
-		Name            string           `json:"name"`
-		Status          *string          `json:"status,omitempty"`
-		Archived        *bool            `json:"archived,omitempty"`
-		Audiences       *Audiences       `json:"audiences,omitempty"`
-		SendOptions     *SendOptions     `json:"send_options,omitempty"`
-		TrackingOptions *TrackingOptions `json:"tracking_options,omitempty"`
-		SendStrategy    *SendStrategy    `json:"send_strategy,omitempty"`
-		CreatedAt       *string          `json:"created_at,omitempty"`
-		ScheduledAt     *string          `json:"scheduled_at,omitempty"`
-		UpdatedAt       *string          `json:"updated_at,omitempty"`
-		SendTime        *string          `json:"send_time,omitempty"`
-		EditorType      *string          `json:"editor_type,omitempty"`
-		HTML            *string          `json:"html,omitempty"`
-		Text            *string          `json:"text,omitempty"`
-		Created         *string          `json:"created,omitempty"`
-		Updated         *string          `json:"updated,omitempty"`
 	}
 
 	CampaignMessage struct {
@@ -58,32 +33,13 @@ type (
 		Content       MessageContent       `json:"content"`
 		SendTimes     []SendTime           `json:"send_times"`
 		RenderOptions MessageRenderOptions `json:"render_options"`
-		CreatedAt     string               `json:"created_at"`
-		UpdatedAt     string               `json:"updated_at"`
+		CreatedAt     time.Time            `json:"created_at"`
+		UpdatedAt     time.Time            `json:"updated_at"`
 	}
 
 	CampaignRelationships struct {
 		Campaign Relationships `json:"campaign"`
 		Template Relationships `json:"template"`
-	}
-
-	MessageIncludedAttributes struct {
-		Name            string           `json:"name"`
-		Status          *string          `json:"status,omitempty"`
-		Archived        *bool            `json:"archived,omitempty"`
-		Audiences       *Audiences       `json:"audiences,omitempty"`
-		SendOptions     *SendOptions     `json:"send_options,omitempty"`
-		TrackingOptions *TrackingOptions `json:"tracking_options,omitempty"`
-		SendStrategy    *SendStrategy    `json:"send_strategy,omitempty"`
-		CreatedAt       *string          `json:"created_at,omitempty"`
-		ScheduledAt     *string          `json:"scheduled_at,omitempty"`
-		UpdatedAt       *string          `json:"updated_at,omitempty"`
-		SendTime        *string          `json:"send_time,omitempty"`
-		EditorType      *string          `json:"editor_type,omitempty"`
-		HTML            *string          `json:"html,omitempty"`
-		Text            *string          `json:"text,omitempty"`
-		Created         *string          `json:"created,omitempty"`
-		Updated         *string          `json:"updated,omitempty"`
 	}
 )
 

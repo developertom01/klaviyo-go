@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/jaswdr/faker"
 )
@@ -88,7 +89,7 @@ type (
 	}
 
 	OptionsSto struct {
-		Date string `json:"date"`
+		Date time.Time `json:"date"`
 	}
 
 	OptionsThrottled struct {

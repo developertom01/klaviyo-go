@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 type (
@@ -32,8 +33,8 @@ type (
 		EditorType EditorType `json:"editor_type"`
 		HTML       string     `json:"html"`    //The rendered HTML of the template
 		Text       *string    `json:"text"`    //The template plain_text
-		Created    *string    `json:"created"` //The date the template was created in ISO 8601 format (YYYY-MM-DDTHH:MM:SS.mmmmmm)
-		Updated    *string    `json:"updated"` //The date the template was updated in ISO 8601 format (YYYY-MM-DDTHH:MM:SS.mmmmmm)
+		Created    *time.Time `json:"created"` //The date the template was created in ISO 8601 format (YYYY-MM-DDTHH:MM:SS.mmmmmm)
+		Updated    *time.Time `json:"updated"` //The date the template was updated in ISO 8601 format (YYYY-MM-DDTHH:MM:SS.mmmmmm)
 	}
 )
 

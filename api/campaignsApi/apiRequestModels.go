@@ -2,6 +2,7 @@ package campaigns
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/developertom01/klaviyo-go/models"
 )
@@ -100,13 +101,13 @@ type (
 
 	// The send configuration options the campaign will send with. These define variables that alter the send strategy and must match the given method. Intended to be used with the 'static' method.
 	OptionsSto struct {
-		Date string `json:"date"` //The send configuration options the campaign will send with. These define variables that alter the send strategy and must match the given method. Intended to be used with the 'smart_send_time' method.
+		Date time.Time `json:"date"` //The send configuration options the campaign will send with. These define variables that alter the send strategy and must match the given method. Intended to be used with the 'smart_send_time' method.
 	}
 
 	// The send configuration options the campaign will send with. These define variables that alter the send strategy and must match the given method. Intended to be used with the 'throttled' method.
 	OptionsThrottled struct {
-		Datetime           string `json:"datetime"`                      //The time to send at . eg 2022-11-08T00:00:00
-		ThrottlePercentage *int64 `json:"throttle_percentage,omitempty"` //The percentage of recipients per hour to send to. Allowed values: [10, 11, 13, 14, 17, 20, 25, 33, 50]
+		Datetime           time.Time `json:"datetime"`                      //The time to send at . eg 2022-11-08T00:00:00
+		ThrottlePercentage *int64    `json:"throttle_percentage,omitempty"` //The percentage of recipients per hour to send to. Allowed values: [10, 11, 13, 14, 17, 20, 25, 33, 50]
 	}
 
 	UtmParam struct {

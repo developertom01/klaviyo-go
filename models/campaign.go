@@ -1,8 +1,10 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type (
@@ -36,30 +38,53 @@ type (
 		SendOptions     SendOptions     `json:"send_options"`     //Options to use when sending a campaign
 		TrackingOptions TrackingOptions `json:"tracking_options"` //The tracking options associated with the campaign
 		SendStrategy    SendStrategy    `json:"send_strategy"`    //The send strategy the campaign will send with
-		CreatedAt       string          `json:"created_at"`       //The datetime when the campaign was created
-		ScheduledAt     string          `json:"scheduled_at"`     // The datetime when the campaign was scheduled for future sending
-		UpdatedAt       string          `json:"updated_at"`       //The datetime when the campaign was last updated by a user or the system
-		SendTime        string          `json:"send_time"`        //The datetime when the campaign will be / was sent or None if not yet scheduled by a send_job.
+		CreatedAt       time.Time       `json:"created_at"`       //The datetime when the campaign was created
+		ScheduledAt     time.Time       `json:"scheduled_at"`     // The datetime when the campaign was scheduled for future sending
+		UpdatedAt       time.Time       `json:"updated_at"`       //The datetime when the campaign was last updated by a user or the system
+		SendTime        time.Time       `json:"send_time"`        //The datetime when the campaign will be / was sent or None if not yet scheduled by a send_job.
 	}
 
 	CampaignIncluded struct {
-		Type       string                     `json:"type"`
-		ID         string                     `json:"id"`
-		Attributes CampaignIncludedAttributes `json:"attributes"`
-		Links      DataLinks                  `json:"links"`
+		Type       string                          `json:"type"`
+		ID         string                          `json:"id"`
+		Attributes CampaignIncludedAttributesUnion `json:"attributes"` //Array of Union type of CampaignMessage | Tag. IsTag and IsCampaignMessage help resolve types
+		Links      DataLinks                       `json:"links"`
 	}
 
-	CampaignIncludedAttributes struct {
-		Label         *string               `json:"label,omitempty"`
-		Channel       *string               `json:"channel,omitempty"`
-		Content       *MessageContent       `json:"content,omitempty"` // //Additional attributes relating to the content of the message
-		SendTimes     []SendTime            `json:"send_times,omitempty"`
-		RenderOptions *MessageRenderOptions `json:"render_options,omitempty"` //Additional options for rendering the message
-		CreatedAt     *string               `json:"created_at,omitempty"`
-		UpdatedAt     *string               `json:"updated_at,omitempty"`
-		Name          *string               `json:"name,omitempty"`
-	}
+	CampaignIncludedAttributesUnion map[string]any
 )
+
+// Return Tag and true included item is a Tag
+func (atr CampaignIncludedAttributesUnion) IsTag() (*Tag, bool) {
+	byteData, err := json.Marshal(atr)
+	if err != nil {
+		return nil, false
+	}
+
+	var tag Tag
+	err = json.Unmarshal(byteData, &tag)
+	if err != nil {
+		return nil, false
+	}
+
+	return &tag, true
+}
+
+// Return CampaignMessage and true included item is a CampaignMessage
+func (atr CampaignIncludedAttributesUnion) IsCampaignMessage() (*CampaignMessage, bool) {
+	byteData, err := json.Marshal(atr)
+	if err != nil {
+		return nil, false
+	}
+
+	var msg CampaignMessage
+	err = json.Unmarshal(byteData, &msg)
+	if err != nil {
+		return nil, false
+	}
+
+	return &msg, true
+}
 
 type (
 	CampaignRecipientCountResponse struct {
