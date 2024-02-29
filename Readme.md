@@ -1,6 +1,6 @@
 # Klaviyo's Unofficial Golang SDK
 
-### Other Klaviyo Resources
+## Other Klaviyo Resources
 
 - [API Reference](https://developers.klaviyo.com/en/v2024-02-15/reference/)
 - [API Guides](https://developers.klaviyo.com/en/v2024-02-15/docs)
