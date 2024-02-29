@@ -16,9 +16,8 @@ type KlaviyoApi struct {
 	Images    images.ImagesApi
 }
 
-func NewKlaviyoApi(apiKey string, retryOption *common.RetryOptions) *KlaviyoApi {
-	opt := options.NewOptionsWithDefaultValues().WithApiKey(apiKey)
-	session := common.NewApiKeySession(opt, retryOption)
+func NewKlaviyoApi(options options.Options, retryOption *common.RetryOptions) *KlaviyoApi {
+	session := common.NewApiKeySession(options, retryOption)
 
 	return &KlaviyoApi{
 		Accounts:  accounts.NewAccountsApi(session, nil),

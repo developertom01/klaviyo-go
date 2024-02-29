@@ -33,11 +33,22 @@ This SDK is organized into the following resources:
  ```go
  var apiKey = "api-key"
     //Initialize options
+ var apiKey = "test-key"
+
  opt := options.NewOptionsWithDefaultValues().WithApiKey(apiKey)
-    session := common.NewApiKeySession(opt, common.NewRetryOptionsWithDefaultValues())
 
-    klaviyoApi := NewAccountsApi(session,nil)
+ klaviyoApi := klaviyo.NewKlaviyoApi(opt, nil)
 
+ ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+ defer cancel()
+
+ accounts, err := klaviyoApi.Accounts.GetAccounts(ctx, []models.AccountsField{models.AccountsFieldContactInformation, models.AccountsFieldContactInformation_DefaultSenderName})
+
+ if err != nil {
+  log.Fatal(err)
+ }
+
+ fmt.Println(accounts)
  ```
 
 ## Filter Builder
