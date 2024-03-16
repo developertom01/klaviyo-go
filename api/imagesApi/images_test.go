@@ -27,15 +27,14 @@ func (suit *ImagesApiTestSuite) SetupTest() {
 }
 
 func (suit *ImagesApiTestSuite) TestUploadImageFromFile() {
-	mockedResponse := models.MockImageResponse()
-
-	multipartFile := strings.NewReader("Some test reader")
-
 	var (
 		name   = "image"
 		hidden = true
 	)
+	
+	mockedResponse := models.MockImageResponse()
 
+	multipartFile := strings.NewReader("Some test reader")
 	payload := UploadImageFromFilePayload{
 		Name:   &name,
 		Hidden: &hidden,
