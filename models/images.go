@@ -1,18 +1,22 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/jaswdr/faker/v2"
+)
 
 type (
 	ImageResponse struct {
-		Data ImageData `json:"data"`
+		Data Image `json:"data"`
 	}
 
 	ImageCollectionResponse struct {
-		Data  []ImageData `json:"data"`
-		Links Links       `json:"links"`
+		Data  []Image `json:"data"`
+		Links Links   `json:"links"`
 	}
 
-	ImageData struct {
+	Image struct {
 		Type       string          `json:"type"` //image
 		ID         string          `json:"id"`   //The ID of the image
 		Attributes ImageAttributes `json:"attributes"`
@@ -65,3 +69,26 @@ const (
 	ImageSortFieldUpdatedAtASC  ImageSortField = "updated_at"
 	ImageSortFieldUpdatedAtDESC ImageSortField = "-updated_at"
 )
+
+func mockImage() Image {
+	fake := faker.New()
+
+	return Image{
+		Type: "images",
+		ID:   fake.UUID().V4(),
+		Attributes: ImageAttributes{
+			Name:      fake.App().Name(),
+			ImageUrl:  fake.Internet().URL(),
+			Size:      1024,
+			Format:    "png",
+			Hidden:    "false",
+			UpdatedAt: time.Now(),
+		},
+	}
+}
+
+func MockImageResponse() ImageResponse {
+	return ImageResponse{
+		Data: mockImage(),
+	}
+}
