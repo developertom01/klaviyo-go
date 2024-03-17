@@ -18,11 +18,11 @@ type (
 	ImagesApi interface {
 		//Get all images in an account.
 		GetImages(ctx context.Context, filterString string, options *GetImagesOptions) (*models.ImageCollectionResponse, error)
-
+		//Get the image with the given image ID.
+		GetImage(ctx context.Context, imageId string, fields []models.ImageField) (*models.ImageResponse, error)
 		//Upload an image from a file.
 		//If you want to import an image from an existing url or a data uri, use the UploadImageFromUrl instead.
 		UploadImageFromFile(ctx context.Context, file io.Reader, payload UploadImageFromFilePayload) (*models.ImageResponse, error)
-
 		//Import an image from a url or data uri.
 		//If you want to upload an image from a file, use the Upload Image From File endpoint instead.
 		UploadImageFromURL(ctx context.Context, payload UploadImageFromUrlPayload) (*models.ImageResponse, error)
@@ -39,6 +39,7 @@ type (
 		PageCursor *string //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#pagination
 		Sort       *models.ImageSortField
 		pageSize   *int //Default: 20. Min: 1. Max: 100.
+		Fields     []models.ImageField
 	}
 )
 
@@ -55,6 +56,70 @@ func NewImagesApi(session common.Session, httpClient common.HTTPClient) ImagesAp
 		baseApiUrl: common.BASE_URL,
 		revision:   common.API_REVISION,
 		httpClient: client}
+}
+
+func buildGetImagesOptionsParams(filter string, opt *GetImagesOptions) string {
+	if opt == nil {
+		return ""
+	}
+	var params = []string{filter}
+
+	if opt.Fields != nil {
+		params = append(params, models.BuildImageFieldParam(opt.Fields))
+	}
+
+	if opt.PageCursor != nil {
+		params = append(params, fmt.Sprintf("page[cursor]=%s", *opt.PageCursor))
+	}
+	if opt.Sort != nil {
+		params = append(params, fmt.Sprintf("sort=%s", *opt.Sort))
+	}
+
+	if opt.pageSize != nil {
+		params = append(params, fmt.Sprintf("page[size]=%d", *opt.pageSize))
+	}
+
+	return strings.Join(params, "&")
+}
+
+func (api *imageApi) GetImages(ctx context.Context, filterString string, options *GetImagesOptions) (*models.ImageCollectionResponse, error) {
+	params := buildGetImagesOptionsParams(filterString, options)
+	url := fmt.Sprintf("%s/api/images/?%s", api.baseApiUrl, params)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, errors.Join(imagesApiCallError, err)
+	}
+
+	var imageCollection models.ImageCollectionResponse
+	err = json.Unmarshal(byteData, &imageCollection)
+
+	return &imageCollection, err
+}
+
+func (api *imageApi) GetImage(ctx context.Context, imageId string, fields []models.ImageField) (*models.ImageResponse, error) {
+	params := models.BuildImageFieldParam(fields)
+	url := fmt.Sprintf("%s/api/images/%s/?%s", api.baseApiUrl, imageId, params)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, errors.Join(imagesApiCallError, err)
+	}
+
+	var imageResponse models.ImageResponse
+	err = json.Unmarshal(byteData, &imageResponse)
+
+	return &imageResponse, err
 }
 
 func (api *imageApi) UploadImageFromFile(ctx context.Context, file io.Reader, payload UploadImageFromFilePayload) (*models.ImageResponse, error) {
@@ -122,44 +187,4 @@ func (api *imageApi) UploadImageFromURL(ctx context.Context, payload UploadImage
 	err = json.Unmarshal(responseByteData, &imageUploadResponse)
 
 	return &imageUploadResponse, err
-}
-
-func buildGetImagesOptionsParams(filter string, opt *GetImagesOptions) string {
-	if opt == nil {
-		return ""
-	}
-	var params = []string{filter}
-
-	if opt.PageCursor != nil {
-		params = append(params, fmt.Sprintf("page[cursor]=%s", *opt.PageCursor))
-	}
-	if opt.Sort != nil {
-		params = append(params, fmt.Sprintf("sort=%s", *opt.Sort))
-	}
-
-	if opt.pageSize != nil {
-		params = append(params, fmt.Sprintf("page[size]=%d", *opt.pageSize))
-	}
-
-	return strings.Join(params, "&")
-}
-
-func (api *imageApi) GetImages(ctx context.Context, filterString string, options *GetImagesOptions) (*models.ImageCollectionResponse, error) {
-	params := buildGetImagesOptionsParams(filterString, options)
-	url := fmt.Sprintf("%s/api/images/?%s", api.baseApiUrl, params)
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
-	if err != nil {
-		return nil, errors.Join(imagesApiCallError, err)
-	}
-
-	var imageCollection models.ImageCollectionResponse
-	err = json.Unmarshal(byteData, &imageCollection)
-
-	return &imageCollection, err
 }

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jaswdr/faker/v2"
@@ -46,7 +48,21 @@ const (
 	ImageFieldUpdatedAt ImageField = "updated_at"
 )
 
-// ---- ImageField
+func BuildImageFieldParam(fields []ImageField) string {
+	if fields == nil {
+		return ""
+	}
+
+	var formattedFields []string
+	for _, field := range fields {
+		formattedFields = append(formattedFields, string(field))
+	}
+
+	return fmt.Sprintf("fields[images]=%s", strings.Join(formattedFields, ","))
+
+}
+
+// ---- ImageSortField
 
 type ImageSortField string
 
