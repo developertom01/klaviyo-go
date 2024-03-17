@@ -26,6 +26,8 @@ type (
 		//Import an image from a url or data uri.
 		//If you want to upload an image from a file, use the Upload Image From File endpoint instead.
 		UploadImageFromURL(ctx context.Context, payload UploadImageFromUrlPayload) (*models.ImageResponse, error)
+		//Update the image with the given image ID.
+		UpdateImage(ctx context.Context, imageId string, payload UpdateImagePayload) (*models.ImageResponse, error)
 	}
 
 	imageApi struct {
@@ -174,6 +176,31 @@ func (api *imageApi) UploadImageFromURL(ctx context.Context, payload UploadImage
 
 	reqPayloadBuffer := bytes.NewBuffer(reqPayload)
 	req, err := http.NewRequest(http.MethodPost, url, reqPayloadBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	responseByteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, errors.Join(imagesApiCallError, err)
+	}
+
+	var imageUploadResponse models.ImageResponse
+	err = json.Unmarshal(responseByteData, &imageUploadResponse)
+
+	return &imageUploadResponse, err
+}
+
+func (api *imageApi) UpdateImage(ctx context.Context, imageId string, payload UpdateImagePayload) (*models.ImageResponse, error) {
+	url := fmt.Sprintf("%s/api/images/%s/", api.baseApiUrl, imageId)
+
+	reqPayload, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	reqPayloadBuffer := bytes.NewBuffer(reqPayload)
+	req, err := http.NewRequest(http.MethodPatch, url, reqPayloadBuffer)
 	if err != nil {
 		return nil, err
 	}
