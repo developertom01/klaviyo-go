@@ -72,5 +72,4 @@ func BuildAccountFieldsParam(fields []AccountsField) string {
 	}
 
 	return fmt.Sprintf("fields[account]=%v", strings.Join(formattedFields, ","))
-
 }
