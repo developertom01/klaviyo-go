@@ -51,6 +51,14 @@ type (
 		Links *RelationshipLinks `json:"links,omitempty"`
 	}
 
+	RelationshipsRequestPayload struct {
+		Data RelationshipData `json:"data,omitempty"`
+	}
+
+	RelationshipsCollectionRequestPayload struct {
+		Data []RelationshipData `json:"data"`
+	}
+
 	RelationshipData struct {
 		Type string `json:"type"`
 		ID   string `json:"id"`
