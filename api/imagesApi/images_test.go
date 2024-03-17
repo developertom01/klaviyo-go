@@ -31,7 +31,7 @@ func (suit *ImagesApiTestSuite) TestUploadImageFromFile() {
 		name   = "image"
 		hidden = true
 	)
-	
+
 	mockedResponse := models.MockImageResponse()
 
 	multipartFile := strings.NewReader("Some test reader")
@@ -49,6 +49,22 @@ func (suit *ImagesApiTestSuite) TestUploadImageFromFile() {
 
 	suit.Nil(err)
 	suit.NotNil(resp)
+}
+
+func (suit *ImagesApiTestSuite) TestGetImages() {
+	var pageSize = 3
+
+	mockedResponse := models.MockImagesCollectionResponse(pageSize)
+	err := common.PrepareMockResponse(http.StatusOK, mockedResponse, suit.mockedClient)
+	if err != nil {
+		suit.T().Fatal(err)
+	}
+
+	resp, err := suit.api.GetImages(context.Background(), "", nil)
+
+	suit.Nil(err)
+	suit.NotNil(resp)
+	suit.Equal(pageSize, len(resp.Data))
 }
 
 func TestImagesApiTestSuite(t *testing.T) {

@@ -92,3 +92,16 @@ func MockImageResponse() ImageResponse {
 		Data: mockImage(),
 	}
 }
+
+func MockImagesCollectionResponse(n int) ImageCollectionResponse {
+	images := make([]Image, 0)
+
+	for i := 0; i < n; i++ {
+		images = append(images, mockImage())
+	}
+
+	return ImageCollectionResponse{
+		Data:  images,
+		Links: MockedLinkResponse(),
+	}
+}
