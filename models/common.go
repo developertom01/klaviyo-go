@@ -47,7 +47,7 @@ type (
 	}
 
 	Relationships struct {
-		Data  *RelationshipData  `json:"data,omitempty"`
+		Data  []RelationshipData `json:"data,omitempty"`
 		Links *RelationshipLinks `json:"links,omitempty"`
 	}
 

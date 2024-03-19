@@ -18,9 +18,9 @@ func mockCampaignsData() models.Campaign {
 		ID: fake.UUID().V4(),
 		Relationships: &models.CampaignRelationship{
 			CampaignMessage: &models.Relationships{
-				Data: &models.RelationshipData{
-					Type: campaignMessageType,
-					ID:   fake.UUID().V4(),
+				Data: []models.RelationshipData{
+					{Type: campaignMessageType,
+						ID: fake.UUID().V4()},
 				},
 				Links: &models.RelationshipLinks{
 					Self:    fake.Internet().URL(),
@@ -28,9 +28,9 @@ func mockCampaignsData() models.Campaign {
 				},
 			},
 			Tags: &models.Relationships{
-				Data: &models.RelationshipData{
-					Type: "tags",
-					ID:   fake.UUID().V4(),
+				Data: []models.RelationshipData{
+					{Type: "tags",
+						ID: fake.UUID().V4()},
 				},
 				Links: &models.RelationshipLinks{
 					Self:    fake.Internet().URL(),
