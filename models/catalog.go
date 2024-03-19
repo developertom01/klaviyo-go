@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -13,6 +14,12 @@ type (
 		Attributes   CatalogItemAttributes     `json:"attributes"`
 		Links        DataLinks                 `json:"links"`
 		Relationship *CatalogItemRelationships `json:"relationships"`
+	}
+
+	CatalogItemCollectionResource struct {
+		Data     []CatalogItem         `json:"data"`
+		Links    Links                 `json:"links"`
+		Included []CatalogItemIncluded `json:"included"`
 	}
 
 	CatalogItemRelationships struct {
@@ -35,6 +42,23 @@ type (
 	}
 )
 
+type CatalogItemIncluded map[string]any
+
+func (inc *CatalogItemIncluded) ToCatalogVariant() (*CatalogVariant, bool) {
+	byteData, err := json.Marshal(inc)
+	if err != nil {
+		return nil, false
+	}
+
+	var catalogVariant CatalogVariant
+	err = json.Unmarshal(byteData, &catalogVariant)
+	if err != nil {
+		return nil, false
+	}
+
+	return &catalogVariant, true
+}
+
 type CatalogItemField string
 
 const (
@@ -52,7 +76,20 @@ const (
 	CatalogItemFieldUpdated           CatalogItemField = "updated"
 )
 
-func CatalogItemFieldParams(fields []CatalogItemField) string {
+type CatalogItemSortField string
+
+const (
+	CatalogItemSortFieldCreatedASC  CatalogItemSortField = "created"
+	CatalogItemSortFieldCreatedDESC CatalogItemSortField = "-created"
+)
+
+type CatalogItemIncludedField string
+
+const (
+	CatalogItemIncludedFieldVariant CatalogItemIncludedField = "variant"
+)
+
+func BuildCatalogItemFieldParams(fields []CatalogItemField) string {
 	if fields == nil {
 		return ""
 	}
@@ -121,7 +158,7 @@ const (
 	CatalogVariantFieldUpdated           CatalogVariantField = "updated"
 )
 
-func CatalogVariantFieldParams(fields []CatalogVariantField) string {
+func BuildCatalogVariantFieldParams(fields []CatalogVariantField) string {
 	if fields == nil {
 		return ""
 	}

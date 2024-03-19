@@ -62,7 +62,7 @@ func NewImagesApi(session common.Session, httpClient common.HTTPClient) ImagesAp
 
 func buildGetImagesOptionsParams(filter string, opt *GetImagesOptions) string {
 	if opt == nil {
-		return ""
+		return filter
 	}
 	var params = []string{filter}
 

@@ -139,6 +139,8 @@ func (api *campaignsApi) GetCampaigns(ctx context.Context, filter string, option
 }
 
 func (api *campaignsApi) CreateCampaign(ctx context.Context, data CreateCampaignRequestData) (*models.CampaignResponse, error) {
+	url := fmt.Sprintf("%s/api/campaigns/", api.baseApiUrl)
+
 	reqData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -146,7 +148,7 @@ func (api *campaignsApi) CreateCampaign(ctx context.Context, data CreateCampaign
 
 	reqDataBuffer := bytes.NewBuffer(reqData)
 
-	req, err := http.NewRequest(http.MethodPost, api.baseApiUrl, reqDataBuffer)
+	req, err := http.NewRequest(http.MethodPost, url, reqDataBuffer)
 	if err != nil {
 		return nil, err
 	}
