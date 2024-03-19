@@ -3,7 +3,6 @@ package campaigns
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -35,7 +34,7 @@ func (api *campaignsApi) GetCampaignMessageRelationshipsCampaign(ctx context.Con
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var res models.RelationshipData
@@ -54,7 +53,7 @@ func (api *campaignsApi) GetCampaignMessageRelationshipsTemplate(ctx context.Con
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var res models.RelationshipData
@@ -73,7 +72,7 @@ func (api *campaignsApi) GetCampaignRelationshipsTags(ctx context.Context, campa
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var res models.RelationshipDataCollectionResponse
@@ -92,7 +91,7 @@ func (api *campaignsApi) GetCampaignRelationshipsCampaignMessages(ctx context.Co
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var res models.RelationshipDataCollectionResponse

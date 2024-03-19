@@ -54,7 +54,7 @@ func (api *accountApi) getAccountsInternal(ctx context.Context, accountFields []
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getAccountApiCallError, err)
+		return nil, err
 	}
 
 	var accountResp models.AccountsCollectionResponse
@@ -81,7 +81,7 @@ func (api *accountApi) GetAccount(ctx context.Context, id string, accountFields 
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getAccountApiCallError, err)
+		return nil, err
 	}
 
 	var accountResp models.AccountResponse

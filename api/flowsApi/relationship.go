@@ -3,7 +3,6 @@ package flows
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -54,7 +53,7 @@ func (api *flowsApi) GetFlowRelationshipsFlowActions(ctx context.Context, flowId
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var relationships models.RelationshipDataCollectionResponse
@@ -73,7 +72,7 @@ func (api *flowsApi) GetFlowRelationshipsTags(ctx context.Context, flowId string
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var relationships models.RelationshipDataCollectionResponse
@@ -92,7 +91,7 @@ func (api *flowsApi) GetFlowActionRelationshipsFlow(ctx context.Context, flowAct
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var relationships models.RelationshipData
@@ -121,7 +120,7 @@ func (api *flowsApi) GetFlowActionRelationshipsMessages(ctx context.Context, flo
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var relationships models.RelationshipDataCollectionResponse
@@ -140,7 +139,7 @@ func (api *flowsApi) GetFlowMessageRelationshipsAction(ctx context.Context, flow
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var relationships models.RelationshipData
@@ -166,7 +165,7 @@ func (api *flowsApi) GetFlowMessageRelationshipsTemplate(ctx context.Context, fl
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var template models.TemplateResponse

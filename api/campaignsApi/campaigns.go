@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -17,7 +16,7 @@ type (
 	CampaignsApi interface {
 		//Returns some or all campaigns based on filters.
 		//A channel filter is required to list campaigns. Please provide either:
-		//filterBuilder := common.NewFilterBuilder()                              
+		//filterBuilder := common.NewFilterBuilder()
 		//filterBuilder.Equal("messages.channel", "email")
 		//filterStr := filterBuilder.Build()
 		GetCampaigns(ctx context.Context, filter string, options *GetCampaignsOptions) (*models.CampaignsCollectionResponse, error)
@@ -140,7 +139,7 @@ func (api *campaignsApi) GetCampaigns(ctx context.Context, filter string, option
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var campaignResp models.CampaignsCollectionResponse
@@ -166,7 +165,7 @@ func (api *campaignsApi) CreateCampaign(ctx context.Context, data CreateCampaign
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignResponse
@@ -186,7 +185,7 @@ func (api *campaignsApi) GetCampaign(ctx context.Context, id string, filter stri
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var campaignResp models.CampaignResponse
@@ -212,7 +211,7 @@ func (api *campaignsApi) UpdateCampaigns(ctx context.Context, id string, data Cr
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignResponse
@@ -244,7 +243,7 @@ func (api *campaignsApi) GetCampaignRecipientEstimation(ctx context.Context, id 
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignRecipientCountResponse
@@ -270,7 +269,7 @@ func (api *campaignsApi) CreateCampaignClone(ctx context.Context, data CreateCam
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignResponse
@@ -291,7 +290,7 @@ func (api *campaignsApi) GetCampaignMessageCampaign(ctx context.Context, message
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var campaignResp models.CampaignResponse
@@ -311,7 +310,7 @@ func (api *campaignsApi) GetCampaignMessageTemplate(ctx context.Context, message
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var template models.TemplateResponse
@@ -333,7 +332,7 @@ func (api *campaignsApi) GetCampaignTags(ctx context.Context, campaignId string,
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var tags models.TagsCollectionResponse
@@ -386,7 +385,7 @@ func (api *campaignsApi) GetCampaignMessages(ctx context.Context, campaignId str
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var msg models.CampaignMessageCollectionResponse

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -44,7 +43,7 @@ func (api *campaignsApi) GetCampaignSendJob(ctx context.Context, jobFields []mod
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var jobResp models.CampaignSendJobResponse
@@ -68,7 +67,7 @@ func (api *campaignsApi) UpdateCampaignSendJob(ctx context.Context, jobId string
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignSendJobResponse
@@ -88,7 +87,7 @@ func (api *campaignsApi) GetCampaignRecipientEstimationJob(ctx context.Context, 
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var jobResp models.CampaignSendJobResponse
@@ -112,7 +111,7 @@ func (api campaignsApi) CreateCampaignSendJob(ctx context.Context, payload Campa
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignSendJobResponse
@@ -137,7 +136,7 @@ func (api campaignsApi) CreateCampaignRecipientEstimationJob(ctx context.Context
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignSendJobResponse

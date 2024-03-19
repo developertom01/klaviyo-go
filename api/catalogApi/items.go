@@ -3,7 +3,6 @@ package catalog
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -68,7 +67,7 @@ func (api catalogApi) GetCatalogItems(ctx context.Context, filterString string, 
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(catalogApiCallError, err)
+		return nil, err
 	}
 
 	var catalogItemsCollection models.CatalogItemCollectionResource

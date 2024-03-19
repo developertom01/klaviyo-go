@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -147,7 +146,7 @@ func (api *flowsApi) GetFlows(ctx context.Context, filterStr *string, options *G
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var flowsCollectionResp models.FlowCollectionResource
@@ -166,7 +165,7 @@ func (api flowsApi) GetFlow(ctx context.Context, flowId string, options *GetFlow
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var flow models.FlowResource
@@ -192,7 +191,7 @@ func (api *flowsApi) UpdateFlowStatus(ctx context.Context, flowId string, payloa
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var flow models.FlowResource
@@ -246,7 +245,7 @@ func (api flowsApi) GetFlowAction(ctx context.Context, flowId string, opt *GetFl
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var flowAction models.FlowActionResource
@@ -296,7 +295,7 @@ func (api *flowsApi) GetFlowMessage(ctx context.Context, flowMessageID string, o
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var message models.FlowMessageResource
@@ -325,7 +324,7 @@ func (api *flowsApi) GetFlowFlowActions(ctx context.Context, flowId string, opt 
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var actions models.FlowActionCollectionResource
@@ -352,7 +351,7 @@ func (api *flowsApi) GetFlowTags(ctx context.Context, flowId string, tagFields [
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var tags models.FlowTagCollectionResource
@@ -378,7 +377,7 @@ func (api *flowsApi) GetFlowForFlowAction(ctx context.Context, flowActionId stri
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var action models.FlowActionResource
@@ -406,7 +405,7 @@ func (api *flowsApi) GetFlowActionMessages(ctx context.Context, flowActionId str
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var messages models.FlowActionMessageCollectionResource
@@ -432,7 +431,7 @@ func (api *flowsApi) GetFlowActionForMessage(ctx context.Context, actionMessageI
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getFlowsApiCallError, err)
+		return nil, err
 	}
 
 	var action models.FlowActionResource

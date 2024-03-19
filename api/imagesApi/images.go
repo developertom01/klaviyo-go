@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -95,7 +94,7 @@ func (api *imageApi) GetImages(ctx context.Context, filterString string, options
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(imagesApiCallError, err)
+		return nil, err
 	}
 
 	var imageCollection models.ImageCollectionResponse
@@ -115,7 +114,7 @@ func (api *imageApi) GetImage(ctx context.Context, imageId string, fields []mode
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(imagesApiCallError, err)
+		return nil, err
 	}
 
 	var imageResponse models.ImageResponse
@@ -157,7 +156,7 @@ func (api *imageApi) UploadImageFromFile(ctx context.Context, file io.Reader, pa
 
 	responseByteData, err := common.MakeMultipartRequest(ctx, requestOptions, multipartOptions)
 	if err != nil {
-		return nil, errors.Join(imagesApiCallError, err)
+		return nil, err
 	}
 
 	var imageUploadResponse models.ImageResponse
@@ -182,7 +181,7 @@ func (api *imageApi) UploadImageFromURL(ctx context.Context, payload UploadImage
 
 	responseByteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(imagesApiCallError, err)
+		return nil, err
 	}
 
 	var imageUploadResponse models.ImageResponse
@@ -207,7 +206,7 @@ func (api *imageApi) UpdateImage(ctx context.Context, imageId string, payload Up
 
 	responseByteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(imagesApiCallError, err)
+		return nil, err
 	}
 
 	var imageUploadResponse models.ImageResponse

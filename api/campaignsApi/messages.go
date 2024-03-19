@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -69,7 +68,7 @@ func (api *campaignsApi) GetCampaignMessage(ctx context.Context, messageId strin
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var messageResponse models.CampaignMessageResponse
@@ -94,7 +93,7 @@ func (api *campaignsApi) UpdateCampaignMessage(ctx context.Context, messageId st
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignMessageResponse
@@ -119,7 +118,7 @@ func (api *campaignsApi) AssignCampaignMessageTemplate(ctx context.Context, payl
 
 	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
 	if err != nil {
-		return nil, errors.Join(getCampaignsApiCallError, err)
+		return nil, err
 	}
 
 	var resp models.CampaignMessageResponse
