@@ -67,9 +67,15 @@ type (
 )
 
 func NewCampaignsApi(session common.Session, httpClient common.HTTPClient) CampaignsApi {
+	var client common.HTTPClient
+	if httpClient == nil {
+		client = http.DefaultClient
+	} else {
+		client = httpClient
+	}
 	return &campaignsApi{
 		session:    session,
-		httpClient: httpClient,
+		httpClient: client,
 		baseApiUrl: common.BASE_URL,
 		revision:   common.API_REVISION,
 	}
