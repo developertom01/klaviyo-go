@@ -73,6 +73,7 @@ func NewCampaignsApi(session common.Session, httpClient common.HTTPClient) Campa
 	} else {
 		client = httpClient
 	}
+	
 	return &campaignsApi{
 		session:    session,
 		httpClient: client,
