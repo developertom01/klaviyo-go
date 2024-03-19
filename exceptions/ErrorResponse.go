@@ -2,7 +2,7 @@ package exceptions
 
 // Error when status code returns 5xx or 4xx
 type ErrorResponse struct {
-	err ApiErrorResponse
+	Err ApiErrorResponse
 }
 
 func (ErrorResponse) Error() string {
@@ -11,6 +11,6 @@ func (ErrorResponse) Error() string {
 
 func NewResponseError(err ApiErrorResponse) ErrorResponse {
 	return ErrorResponse{
-		err: err,
+		Err: err,
 	}
 }
