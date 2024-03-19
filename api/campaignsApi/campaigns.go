@@ -16,8 +16,7 @@ type (
 	CampaignsApi interface {
 		//Returns some or all campaigns based on filters.
 		//A channel filter is required to list campaigns. Please provide either:
-		//filterBuilder := common.NewFilterBuilder()
-		//filterBuilder.Equal("messages.channel", "email")
+		//filterBuilder.Equal("messages.channel", "email") or filterBuilder.Equal("messages.channel", "sms") and then build the filter by 
 		//filterStr := filterBuilder.Build()
 		GetCampaigns(ctx context.Context, filter string, options *GetCampaignsOptions) (*models.CampaignsCollectionResponse, error)
 
