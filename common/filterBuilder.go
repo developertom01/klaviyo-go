@@ -36,55 +36,64 @@ func NewFilterBuilder() *FilterBuilder {
 }
 
 func (builder *FilterBuilder) Equal(field string, value string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%s", field, value))
+	operation := url.QueryEscape(fmt.Sprintf("%s,%q", field, value))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorEquals, operation))
 	return builder
 }
 
 func (builder *FilterBuilder) LessThan(field string, value string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%s", field, value))
+	operation := url.QueryEscape(fmt.Sprintf("%s,%q", field, value))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorLessThan, operation))
 
 	return builder
 }
 
 func (builder *FilterBuilder) LessOrEqual(field string, value string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%s", field, value))
+	operation := url.QueryEscape(fmt.Sprintf("%s,%q", field, value))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorLessOrEqual, operation))
 
 	return builder
 }
 
 func (builder *FilterBuilder) GreaterThan(field string, value string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%s", field, value))
+	operation := url.QueryEscape(fmt.Sprintf("%s,%q", field, value))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorGreaterThan, operation))
 
 	return builder
 }
 
 func (builder *FilterBuilder) GreaterOrEqual(field string, value string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%s", field, value))
+	operation := url.QueryEscape(fmt.Sprintf("%s,%q", field, value))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorGreaterOrEqual, operation))
 
 	return builder
 }
 
 func (builder *FilterBuilder) Contains(field string, value string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%s", field, value))
+	operation := url.QueryEscape(fmt.Sprintf("%s,%q", field, value))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorContains, operation))
 
 	return builder
 }
 
 func (builder *FilterBuilder) ContainsAny(field string, values []string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%v", field, values))
+	var valuesStr = make([]string, 0)
+	for _, value := range values {
+		valuesStr = append(valuesStr, fmt.Sprintf("%q", value))
+	}
+	operation := url.QueryEscape(fmt.Sprintf("%s,%v", field, valuesStr))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorContainsAny, operation))
 
 	return builder
 }
 
 func (builder *FilterBuilder) ContainsAll(field string, values []string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%v", field, values))
+	var valuesStr = make([]string, 0)
+	for _, value := range values {
+		valuesStr = append(valuesStr, fmt.Sprintf("%q", value))
+	}
+
+	operation := url.QueryEscape(fmt.Sprintf("%s,%v", field, valuesStr))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorContainsAll, operation))
 
 	return builder
@@ -105,7 +114,12 @@ func (builder *FilterBuilder) StartsWith(field string, value string) *FilterBuil
 }
 
 func (builder *FilterBuilder) Any(field string, values []string) *FilterBuilder {
-	operation := url.QueryEscape(fmt.Sprintf("%s,%v", field, values))
+	var valuesStr = make([]string, 0)
+	for _, value := range values {
+		valuesStr = append(valuesStr, fmt.Sprintf("%q", value))
+	}
+
+	operation := url.QueryEscape(fmt.Sprintf("%s,%v", field, valuesStr))
 	builder.filters = append(builder.filters, fmt.Sprintf("%s(%s)", FilterOperatorAny, operation))
 
 	return builder

@@ -7,7 +7,7 @@ import (
 )
 
 func TestEqual(t *testing.T) {
-	var expectedStr = "filter=equals(field1%2Cvalue)"
+	var expectedStr = "filter=equals(field1%2C%22value%22)"
 	fb := NewFilterBuilder()
 	fb.Equal("field1", "value")
 
@@ -15,7 +15,7 @@ func TestEqual(t *testing.T) {
 }
 
 func TestLessThan(t *testing.T) {
-	var expectedStr = "filter=less-than(field1%2Cvalue)"
+	var expectedStr = "filter=less-than(field1%2C%22value%22)"
 	fb := NewFilterBuilder()
 	fb.LessThan("field1", "value")
 
@@ -23,7 +23,7 @@ func TestLessThan(t *testing.T) {
 }
 
 func TestLessThanOrEqual(t *testing.T) {
-	var expectedStr = "filter=less-or-equal(field1%2Cvalue)"
+	var expectedStr = "filter=less-or-equal(field1%2C%22value%22)"
 	fb := NewFilterBuilder()
 	fb.LessOrEqual("field1", "value")
 
@@ -31,7 +31,7 @@ func TestLessThanOrEqual(t *testing.T) {
 }
 
 func TestGreaterThan(t *testing.T) {
-	var expectedStr = "filter=greater-than(field1%2Cvalue)"
+	var expectedStr = "filter=greater-than(field1%2C%22value%22)"
 	fb := NewFilterBuilder()
 	fb.GreaterThan("field1", "value")
 
@@ -39,7 +39,7 @@ func TestGreaterThan(t *testing.T) {
 }
 
 func TestGreaterOrEqual(t *testing.T) {
-	var expectedStr = "filter=greater-or-equal(field1%2Cvalue)"
+	var expectedStr = "filter=greater-or-equal(field1%2C%22value%22)"
 	fb := NewFilterBuilder()
 	fb.GreaterOrEqual("field1", "value")
 
@@ -47,7 +47,7 @@ func TestGreaterOrEqual(t *testing.T) {
 }
 
 func TestContains(t *testing.T) {
-	var expectedStr = "filter=contains(field1%2Cvalue)"
+	var expectedStr = "filter=contains(field1%2C%22value%22)"
 	fb := NewFilterBuilder()
 	fb.Contains("field1", "value")
 
@@ -55,7 +55,7 @@ func TestContains(t *testing.T) {
 }
 
 func TestContainsAny(t *testing.T) {
-	var expectedStr = "filter=contains-any(field1%2C%5Bvalue1+value2%5D)"
+	var expectedStr = "filter=contains-any(field1%2C%5B%22value1%22+%22value2%22%5D)"
 	fb := NewFilterBuilder()
 	fb.ContainsAny("field1", []string{"value1", "value2"})
 
@@ -63,7 +63,7 @@ func TestContainsAny(t *testing.T) {
 }
 
 func TestContainsAll(t *testing.T) {
-	var expectedStr = "filter=contains-all(field1%2C%5Bvalue1+value2%5D)"
+	var expectedStr = "filter=contains-all(field1%2C%5B%22value1%22+%22value2%22%5D)"
 	fb := NewFilterBuilder()
 	fb.ContainsAll("field1", []string{"value1", "value2"})
 
@@ -87,7 +87,7 @@ func TestStartsWith(t *testing.T) {
 }
 
 func TestAny(t *testing.T) {
-	var expectedStr = "filter=any(field1%2C%5Bvalue1+value2%5D)"
+	var expectedStr = "filter=any(field1%2C%5B%22value1%22+%22value2%22%5D)"
 	fb := NewFilterBuilder()
 	fb.Any("field1", []string{"value1", "value2"})
 
@@ -95,7 +95,7 @@ func TestAny(t *testing.T) {
 }
 
 func TestAnd(t *testing.T) {
-	var expectedStr = "filter=and(equals%28field1%252Cvalue1%29%2Cequals%28field2%252Cvalue2%29)"
+	var expectedStr = "filter=and(equals%28field1%252C%2522value1%2522%29%2Cequals%28field2%252C%2522value2%2522%29)"
 
 	fb1 := NewFilterBuilder()
 	fb1.Equal("field1", "value1")
@@ -109,7 +109,7 @@ func TestAnd(t *testing.T) {
 }
 
 func TestOr(t *testing.T) {
-	var expectedStr = "filter=or(equals%28field1%252Cvalue1%29%2Cequals%28field2%252Cvalue2%29)"
+	var expectedStr = "filter=or(equals%28field1%252C%2522value1%2522%29%2Cequals%28field2%252C%2522value2%2522%29)"
 
 	fb1 := NewFilterBuilder()
 	fb1.Equal("field1", "value1")
@@ -123,7 +123,7 @@ func TestOr(t *testing.T) {
 }
 
 func TestNot(t *testing.T) {
-	var expectedStr = "filter=not(equals(field1%2Cvalue1))"
+	var expectedStr = "filter=not(equals(field1%2C%22value1%22))"
 
 	fb1 := NewFilterBuilder()
 	fb1.Equal("field1", "value1")

@@ -16,6 +16,10 @@ import (
 type (
 	CampaignsApi interface {
 		//Returns some or all campaigns based on filters.
+		//A channel filter is required to list campaigns. Please provide either:
+		//filterBuilder := common.NewFilterBuilder()                              
+		//filterBuilder.Equal("messages.channel", "email")
+		//filterStr := filterBuilder.Build()
 		GetCampaigns(ctx context.Context, filter string, options *GetCampaignsOptions) (*models.CampaignsCollectionResponse, error)
 
 		//Creates a campaign given a set of parameters, then returns it.
@@ -73,7 +77,7 @@ func NewCampaignsApi(session common.Session, httpClient common.HTTPClient) Campa
 	} else {
 		client = httpClient
 	}
-	
+
 	return &campaignsApi{
 		session:    session,
 		httpClient: client,
