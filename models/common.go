@@ -64,7 +64,7 @@ type (
 		ID   string `json:"id"`
 	}
 
-	RelationshipDataCollectionResponse struct {
+	RelationshipDataCollection struct {
 		Data []RelationshipData `json:"data"`
 	}
 

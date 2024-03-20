@@ -14,16 +14,16 @@ import (
 type (
 	FlowRelationshipsApi interface {
 		//Get all relationships for flow actions associated with the given flow ID.
-		GetFlowRelationshipsFlowActions(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionPaginationOptions) (*models.RelationshipDataCollectionResponse, error)
+		GetFlowRelationshipsFlowActions(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionPaginationOptions) (*models.RelationshipDataCollection, error)
 
 		//Return the tag IDs of all tags associated with the given flow.
-		GetFlowRelationshipsTags(ctx context.Context, flowId string) (*models.RelationshipDataCollectionResponse, error)
+		GetFlowRelationshipsTags(ctx context.Context, flowId string) (*models.RelationshipDataCollection, error)
 
 		//Get the flow associated with the given action ID.
 		GetFlowActionRelationshipsFlow(ctx context.Context, flowActionId string) (*models.RelationshipData, error)
 
 		//Get all relationships for flow messages associated with the given flow action ID.
-		GetFlowActionRelationshipsMessages(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionMessagePaginationOptions) (*models.RelationshipDataCollectionResponse, error)
+		GetFlowActionRelationshipsMessages(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionMessagePaginationOptions) (*models.RelationshipDataCollection, error)
 
 		//Get the relationship for a flow message's flow action, given the flow ID.
 		GetFlowMessageRelationshipsAction(ctx context.Context, flowMessageId string) (*models.RelationshipData, error)
@@ -33,7 +33,7 @@ type (
 	}
 )
 
-func (api *flowsApi) GetFlowRelationshipsFlowActions(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionPaginationOptions) (*models.RelationshipDataCollectionResponse, error) {
+func (api *flowsApi) GetFlowRelationshipsFlowActions(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionPaginationOptions) (*models.RelationshipDataCollection, error) {
 	params := make([]string, 0)
 	if filterStr != nil {
 		params = append(params, *filterStr)
@@ -56,13 +56,13 @@ func (api *flowsApi) GetFlowRelationshipsFlowActions(ctx context.Context, flowId
 		return nil, err
 	}
 
-	var relationships models.RelationshipDataCollectionResponse
+	var relationships models.RelationshipDataCollection
 	err = json.Unmarshal(byteData, &relationships)
 
 	return &relationships, err
 }
 
-func (api *flowsApi) GetFlowRelationshipsTags(ctx context.Context, flowId string) (*models.RelationshipDataCollectionResponse, error) {
+func (api *flowsApi) GetFlowRelationshipsTags(ctx context.Context, flowId string) (*models.RelationshipDataCollection, error) {
 	url := fmt.Sprintf("%s/api/flows/%s/relationships/tags/", api.baseApiUrl, flowId)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -75,7 +75,7 @@ func (api *flowsApi) GetFlowRelationshipsTags(ctx context.Context, flowId string
 		return nil, err
 	}
 
-	var relationships models.RelationshipDataCollectionResponse
+	var relationships models.RelationshipDataCollection
 	err = json.Unmarshal(byteData, &relationships)
 
 	return &relationships, err
@@ -100,7 +100,7 @@ func (api *flowsApi) GetFlowActionRelationshipsFlow(ctx context.Context, flowAct
 	return &relationships, err
 }
 
-func (api *flowsApi) GetFlowActionRelationshipsMessages(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionMessagePaginationOptions) (*models.RelationshipDataCollectionResponse, error) {
+func (api *flowsApi) GetFlowActionRelationshipsMessages(ctx context.Context, flowId string, filterStr *string, paginationOption *FlowActionMessagePaginationOptions) (*models.RelationshipDataCollection, error) {
 	params := make([]string, 0)
 	if filterStr != nil {
 		params = append(params, *filterStr)
@@ -123,7 +123,7 @@ func (api *flowsApi) GetFlowActionRelationshipsMessages(ctx context.Context, flo
 		return nil, err
 	}
 
-	var relationships models.RelationshipDataCollectionResponse
+	var relationships models.RelationshipDataCollection
 	err = json.Unmarshal(byteData, &relationships)
 
 	return &relationships, err

@@ -23,6 +23,11 @@ type (
 		//Get a specific catalog item with the given item ID.
 		//CatalogItemId: The catalog item ID is a compound ID (string), with format: {integration}:::{catalog}:::{external_id}. Currently, the only supported integration type is $custom, and the only supported catalog is $default.
 		GetCatalogItem(ctx context.Context, catalogItemId string, options *GetCatalogItemApiOptions) (*models.CatalogItemResource, error)
+		//Update a catalog item with the given item ID.
+		UpdateCatalogItem(ctx context.Context, catalogItemId string, payload UpdateCatalogItemPayload) (*models.CatalogItemResource, error)
+		//Delete a catalog item with the given item ID.
+		//The catalog item ID is a compound ID (string), with format: {integration}:::{catalog}:::{external_id}. Currently, the only supported integration type is $custom, and the only supported catalog is $default.
+		DeleteCatalogItem(ctx context.Context, catalogItemId string) error
 	}
 )
 
@@ -166,4 +171,40 @@ func (api *catalogApi) GetCatalogItem(ctx context.Context, catalogItemId string,
 	err = json.Unmarshal(byteData, &catalogItem)
 
 	return &catalogItem, nil
+}
+
+func (api catalogApi) UpdateCatalogItem(ctx context.Context, catalogItemId string, payload UpdateCatalogItemPayload) (*models.CatalogItemResource, error) {
+	url := fmt.Sprintf("%s/api/catalog-items/%s/", api.baseApiUrl, catalogItemId)
+
+	reqData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	reqDataBuffer := bytes.NewBuffer(reqData)
+
+	req, err := http.NewRequest(http.MethodPatch, url, reqDataBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var catalogItemResource models.CatalogItemResource
+	err = json.Unmarshal(byteData, &catalogItemResource)
+
+	return &catalogItemResource, err
+}
+
+func (api *catalogApi) DeleteCatalogItem(ctx context.Context, catalogItemId string) error {
+	url := fmt.Sprintf("%s/api/catalog-items/%s/", api.baseApiUrl, catalogItemId)
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return err
+	}
+	_, err = common.RetrieveData(api.httpClient, req, api.session, api.revision)
+
+	return err
 }

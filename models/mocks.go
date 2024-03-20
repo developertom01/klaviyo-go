@@ -55,13 +55,13 @@ func MockRelationshipData(rType string) RelationshipData {
 	}
 }
 
-func MockRelationshipDataCollectionResponse(rType string, n int) RelationshipDataCollectionResponse {
+func MockRelationshipDataCollectionResponse(rType string, n int) RelationshipDataCollection {
 	relationships := make([]RelationshipData, 0)
 	for i := 0; i < n; i++ {
 		relationships = append(relationships, MockRelationshipData(rType))
 	}
 
-	return RelationshipDataCollectionResponse{
+	return RelationshipDataCollection{
 		Data: relationships,
 	}
 }

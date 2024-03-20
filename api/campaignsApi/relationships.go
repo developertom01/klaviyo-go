@@ -18,10 +18,10 @@ type CampaignRelationshipsAPi interface {
 	GetCampaignMessageRelationshipsTemplate(ctx context.Context, messageId string) (*models.RelationshipData, error)
 
 	//Returns the IDs of all tags associated with the given campaign. [`type`: tag, `id`: tag ID]
-	GetCampaignRelationshipsTags(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error)
+	GetCampaignRelationshipsTags(ctx context.Context, campaignId string) (*models.RelationshipDataCollection, error)
 
 	//Returns the IDs of all messages associated with the given campaign. [`type`: campaign-messages, `id`: message ID]
-	GetCampaignRelationshipsCampaignMessages(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error)
+	GetCampaignRelationshipsCampaignMessages(ctx context.Context, campaignId string) (*models.RelationshipDataCollection, error)
 }
 
 func (api *campaignsApi) GetCampaignMessageRelationshipsCampaign(ctx context.Context, messageId string) (*models.RelationshipData, error) {
@@ -62,7 +62,7 @@ func (api *campaignsApi) GetCampaignMessageRelationshipsTemplate(ctx context.Con
 	return &res, err
 }
 
-func (api *campaignsApi) GetCampaignRelationshipsTags(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error) {
+func (api *campaignsApi) GetCampaignRelationshipsTags(ctx context.Context, campaignId string) (*models.RelationshipDataCollection, error) {
 	url := fmt.Sprintf("%s/api/campaigns/%s/relationships/tags/", api.baseApiUrl, campaignId)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -75,13 +75,13 @@ func (api *campaignsApi) GetCampaignRelationshipsTags(ctx context.Context, campa
 		return nil, err
 	}
 
-	var res models.RelationshipDataCollectionResponse
+	var res models.RelationshipDataCollection
 	err = json.Unmarshal(byteData, &res)
 
 	return &res, err
 }
 
-func (api *campaignsApi) GetCampaignRelationshipsCampaignMessages(ctx context.Context, campaignId string) (*models.RelationshipDataCollectionResponse, error) {
+func (api *campaignsApi) GetCampaignRelationshipsCampaignMessages(ctx context.Context, campaignId string) (*models.RelationshipDataCollection, error) {
 	url := fmt.Sprintf("%s/api/campaigns/%s/relationships/campaign-messages/", api.baseApiUrl, campaignId)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -94,7 +94,7 @@ func (api *campaignsApi) GetCampaignRelationshipsCampaignMessages(ctx context.Co
 		return nil, err
 	}
 
-	var res models.RelationshipDataCollectionResponse
+	var res models.RelationshipDataCollection
 	err = json.Unmarshal(byteData, &res)
 
 	return &res, err
