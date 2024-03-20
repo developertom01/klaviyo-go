@@ -30,7 +30,7 @@ type (
 		ImageUrl  string    `json:"image_url"`
 		Format    string    `json:"format"`
 		Size      int       `json:"size"`
-		Hidden    string    `json:"hidden"`
+		Hidden    bool      `json:"hidden"`
 		UpdatedAt time.Time `json:"updated_at"`
 	}
 )
@@ -97,7 +97,7 @@ func mockImage() Image {
 			ImageUrl:  fake.Internet().URL(),
 			Size:      1024,
 			Format:    "png",
-			Hidden:    "false",
+			Hidden:    false,
 			UpdatedAt: time.Now(),
 		},
 	}
