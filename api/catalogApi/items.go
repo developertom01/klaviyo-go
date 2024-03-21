@@ -28,6 +28,10 @@ type (
 		//Delete a catalog item with the given item ID.
 		//The catalog item ID is a compound ID (string), with format: {integration}:::{catalog}:::{external_id}. Currently, the only supported integration type is $custom, and the only supported catalog is $default.
 		DeleteCatalogItem(ctx context.Context, catalogItemId string) error
+
+		//Get all catalog item bulk create jobs.
+		//Returns a maximum of 100 jobs per request.
+		GetCreateItemsJobs(ctx context.Context, options *GetCreateItemsJobsOptions) (*models.CatalogItemBulkCreateJobCollectionResource, error)
 	}
 )
 
@@ -207,4 +211,53 @@ func (api *catalogApi) DeleteCatalogItem(ctx context.Context, catalogItemId stri
 	_, err = common.RetrieveData(api.httpClient, req, api.session, api.revision)
 
 	return err
+}
+
+type GetCreateItemsJobsOptions struct {
+	Filter         *string                                //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#filtering Allowed field(s)/operator(s):status: equals
+	PageCursor     *string                                //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#pagination
+	ItemJobsFields []models.CatalogItemBulkCreateJobField //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#sparse-fieldsets
+}
+
+// func
+func buildGetGetCreateItemsJobsOptionsParams(options *GetCreateItemsJobsOptions) string {
+	if options == nil {
+		return ""
+	}
+	var params = []string{}
+
+	if options.Filter != nil {
+		params = append(params, *options.Filter)
+	}
+
+	if options.PageCursor != nil {
+		params = append(params, fmt.Sprintf("page[cursor]=%s", *options.PageCursor))
+	}
+
+	if options.ItemJobsFields != nil {
+		params = append(params, models.BuildCatalogItemBulkCreateJobFieldParams(options.ItemJobsFields))
+	}
+
+	return strings.Join(params, "&")
+}
+
+func (api catalogApi) GetCreateItemsJobs(ctx context.Context, options *GetCreateItemsJobsOptions) (*models.CatalogItemBulkCreateJobCollectionResource, error) {
+	queryParams := buildGetGetCreateItemsJobsOptionsParams(options)
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-create-jobs/?%s", api.baseApiUrl, queryParams)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var itemJobs models.CatalogItemBulkCreateJobCollectionResource
+	err = json.Unmarshal(byteData, &itemJobs)
+
+	return &itemJobs, nil
 }
