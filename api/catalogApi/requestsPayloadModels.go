@@ -151,3 +151,33 @@ type (
 		ID   string `json:"id"`   //The catalog item ID is a compound ID (string), with format: {integration}:::{catalog}:::{external_id}. Currently, the only supported integration type is $custom, and the only supported catalog is $default.
 	}
 )
+
+type (
+	UpdateCatalogVariantPayload struct {
+		Data UpdateCatalogVariantPayloadData
+	}
+	UpdateCatalogVariantPayloadData struct {
+		Type       string                                `json:"type"` // catalog-variant
+		ID         string                                `json:"id"`   //The catalog variant ID is a compound ID (string), with format: {integration}:::{catalog}:::{external_id}. Currently, the only supported integration type is $custom, and the only supported catalog is $default.
+		Attributes UpdateCatalogVariantPayloadAttributes `json:"attributes"`
+	}
+
+	UpdateCatalogVariantPayloadAttributes struct {
+		Title       *string `json:"title,omitempty"`       //The title of the catalog item.
+		Description *string `json:"description,omitempty"` //A description of the catalog item.
+		Sku         *string `json:"sku"`                   //The SKU of the catalog item variant.
+		//This field controls the visibility of this catalog item variant in product feeds/blocks. This field supports the following values:
+		//1: a product will not appear in dynamic product recommendation feeds and blocks if it is out of stock.
+		//0 or 2: a product can appear in dynamic product recommendation feeds and blocks regardless of inventory quantity.
+		//Default: 2
+		InventoryPolicy   *int           `json:"inventory_policy"`
+		InventoryQuantity *int64         `json:"inventory_quantity"`            //The quantity of the catalog item variant currently in stock.
+		Price             *int64         `json:"price,omitempty"`               //This field can be used to set the price on the catalog item variant, which is what gets displayed for the item variant when included in emails. For most price-update use cases, you will also want to update the price on any parent items using the Update Catalog Item Endpoint.
+		Url               *string        `json:"url,omitempty"`                 //URL pointing to the location of the catalog item on your website.
+		ImageFullUrl      *string        `json:"image_full_url,omitempty"`      //URL pointing to the location of a full image of the catalog item.
+		ImageThumbnailUrl *string        `json:"image_thumbnail_url,omitempty"` //URL pointing to the location of an image thumbnail of the catalog item
+		Images            []string       `json:"images,omitempty"`              //List of URLs pointing to the locations of images of the catalog item.
+		CustomMetadata    map[string]any `json:"custom_metadata,omitempty"`     //Flat JSON blob to provide custom metadata about the catalog item. May not exceed 100kb.
+		Published         *bool          `json:"published,omitempty"`           //Boolean value indicating whether the catalog item is published.
+	}
+)

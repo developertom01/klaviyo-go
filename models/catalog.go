@@ -117,6 +117,15 @@ type (
 		Links         DataLinks                    `json:"links"`
 	}
 
+	CatalogVariantCollectionResource struct {
+		Data  []CatalogVariant `json:"data"`
+		Links Links            `json:"links"`
+	}
+
+	CatalogVariantResource struct {
+		Data CatalogVariant `json:"data"`
+	}
+
 	CatalogVariantRelationships struct {
 		Item Relationships `json:"item"`
 	}
@@ -176,6 +185,13 @@ func BuildCatalogVariantFieldParams(fields []CatalogVariantField) string {
 
 	return fmt.Sprintf("fields[catalog-variant]=%s", strings.Join(formattedFields, ","))
 }
+
+type CatalogVariantSortField string
+
+const (
+	CatalogVariantSortFieldCreatedASC  CatalogVariantSortField = "created"
+	CatalogVariantSortFieldCreatedDESC CatalogVariantSortField = "-created"
+)
 
 type (
 	//Resource for bulk catalog creation or update
