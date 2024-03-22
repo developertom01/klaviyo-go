@@ -31,8 +31,12 @@ func Retry(fn RetryableFunc, opt RetryOptions) (*http.Response, error) {
 		// Execute the provided function
 		resp, err = fn()
 
+		if err != nil {
+			return nil, err
+		}
+
 		// If successful, break the loop
-		if err == nil && resp.StatusCode == http.StatusOK {
+		if resp.StatusCode == http.StatusOK {
 			break
 		}
 
