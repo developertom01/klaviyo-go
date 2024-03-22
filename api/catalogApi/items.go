@@ -28,10 +28,35 @@ type (
 		//Delete a catalog item with the given item ID.
 		//The catalog item ID is a compound ID (string), with format: {integration}:::{catalog}:::{external_id}. Currently, the only supported integration type is $custom, and the only supported catalog is $default.
 		DeleteCatalogItem(ctx context.Context, catalogItemId string) error
-
 		//Get all catalog item bulk create jobs.
 		//Returns a maximum of 100 jobs per request.
-		GetCreateItemsJobs(ctx context.Context, options *GetCreateItemsJobsOptions) (*models.CatalogItemBulkCreateJobCollectionResource, error)
+		GetCreateItemsJobs(ctx context.Context, options *GetBulkItemsJobsOptions) (*models.CatalogItemBulkJobCollectionResource, error)
+		//Create a catalog item bulk create job to create a batch of catalog items
+		//Accepts up to 100 catalog items per request. The maximum allowed payload size is 5MB.
+		//The maximum number of jobs in progress at one time is 500.
+		SpawnCreateItemsJob(ctx context.Context, payload SpawnCreateItemsJobPayload) (*models.CatalogItemBulkJobResource, error)
+		//Get a catalog item bulk create job with the given job ID.
+		//An include parameter can be provided to get the following related resource data: items.
+		GetCreateItemsJob(ctx context.Context, buildCreateJobId string, options *GetBulkItemsJobOptions) (*models.CatalogItemBulkJobResource, error)
+		//Get all catalog item bulk update jobs.
+		GetUpdateItemsJobs(ctx context.Context, options *GetBulkItemsJobsOptions) (*models.CatalogItemBulkJobCollectionResource, error)
+		//Create a catalog item bulk update job to update a batch of catalog items.
+		//Accepts up to 100 catalog items per request. The maximum allowed payload size is 5MB.
+		//The maximum number of jobs in progress at one time is 500.
+		SpawnUpdateItemsJob(ctx context.Context, payload SpawnUpdateItemsJobPayload) (*models.CatalogItemBulkJobResource, error)
+		//Get a catalog item bulk update job with the given job ID.
+		//An include parameter can be provided to get the following related resource data: items.
+		GetUpdateItemsJob(ctx context.Context, buildUpdateJobId string, options *GetBulkItemsJobOptions) (*models.CatalogItemBulkJobResource, error)
+		//Get all catalog item bulk delete jobs.
+		//Returns a maximum of 100 jobs per request.
+		GetDeleteItemsJobs(ctx context.Context, options *GetBulkItemsJobsOptions) (*models.CatalogItemBulkJobCollectionResource, error)
+		//Create a catalog item bulk delete job to delete a batch of catalog items.
+		//Accepts up to 100 catalog items per request. The maximum allowed payload size is 5MB.
+		//The maximum number of jobs in progress at one time is 500.
+		SpawnDeleteItemsJob(ctx context.Context, payload SpawnDeleteItemsJobPayload) (*models.CatalogItemBulkJobResource, error)
+		//Get a catalog item bulk Delete job with the given job ID.
+		//An include parameter can be provided to get the following related resource data: items.
+		GetDeleteItemsJob(ctx context.Context, buildDeleteJobId string, options *GetBulkItemsJobOptions) (*models.CatalogItemBulkJobResource, error)
 	}
 )
 
@@ -213,14 +238,14 @@ func (api *catalogApi) DeleteCatalogItem(ctx context.Context, catalogItemId stri
 	return err
 }
 
-type GetCreateItemsJobsOptions struct {
-	Filter         *string                                //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#filtering Allowed field(s)/operator(s):status: equals
-	PageCursor     *string                                //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#pagination
-	ItemJobsFields []models.CatalogItemBulkCreateJobField //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#sparse-fieldsets
+type GetBulkItemsJobsOptions struct {
+	Filter         *string                          //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#filtering Allowed field(s)/operator(s):status: equals
+	PageCursor     *string                          //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#pagination
+	ItemJobsFields []models.CatalogItemBulkJobField //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#sparse-fieldsets
 }
 
 // func
-func buildGetGetCreateItemsJobsOptionsParams(options *GetCreateItemsJobsOptions) string {
+func buildGetBulkItemsJobsOptionsParams(options *GetBulkItemsJobsOptions) string {
 	if options == nil {
 		return ""
 	}
@@ -235,14 +260,14 @@ func buildGetGetCreateItemsJobsOptionsParams(options *GetCreateItemsJobsOptions)
 	}
 
 	if options.ItemJobsFields != nil {
-		params = append(params, models.BuildCatalogItemBulkCreateJobFieldParams(options.ItemJobsFields))
+		params = append(params, models.BuildCatalogItemBulkJobFieldParams(options.ItemJobsFields))
 	}
 
 	return strings.Join(params, "&")
 }
 
-func (api catalogApi) GetCreateItemsJobs(ctx context.Context, options *GetCreateItemsJobsOptions) (*models.CatalogItemBulkCreateJobCollectionResource, error) {
-	queryParams := buildGetGetCreateItemsJobsOptionsParams(options)
+func (api catalogApi) GetCreateItemsJobs(ctx context.Context, options *GetBulkItemsJobsOptions) (*models.CatalogItemBulkJobCollectionResource, error) {
+	queryParams := buildGetBulkItemsJobsOptionsParams(options)
 	url := fmt.Sprintf("%s/api/catalog-item-bulk-create-jobs/?%s", api.baseApiUrl, queryParams)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -256,8 +281,221 @@ func (api catalogApi) GetCreateItemsJobs(ctx context.Context, options *GetCreate
 		return nil, err
 	}
 
-	var itemJobs models.CatalogItemBulkCreateJobCollectionResource
+	var itemJobs models.CatalogItemBulkJobCollectionResource
 	err = json.Unmarshal(byteData, &itemJobs)
 
 	return &itemJobs, nil
+}
+
+func (api *catalogApi) SpawnCreateItemsJob(ctx context.Context, payload SpawnCreateItemsJobPayload) (*models.CatalogItemBulkJobResource, error) {
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-create-jobs/", api.baseApiUrl)
+
+	reqData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	reqDataBuffer := bytes.NewBuffer(reqData)
+
+	req, err := http.NewRequest(http.MethodPost, url, reqDataBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var catalogItemResource models.CatalogItemBulkJobResource
+	err = json.Unmarshal(byteData, &catalogItemResource)
+
+	return &catalogItemResource, err
+}
+
+type GetBulkItemsJobOptions struct {
+	ItemJobsFields     []models.CatalogItemBulkJobField        //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#sparse-fieldsets
+	CatalogItemsFields []models.CatalogItemField               //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#sparse-fieldsets
+	Include            []models.CatalogItemBulkJobIncludeField //For more information please visit https://developers.klaviyo.com/en/v2024-02-15/reference/api-overview#relationships
+
+}
+
+func buildGetBulkItemsJobOptionsParams(options *GetBulkItemsJobOptions) string {
+	if options == nil {
+		return ""
+	}
+	var params = []string{}
+
+	if options.ItemJobsFields != nil {
+		params = append(params, models.BuildCatalogItemBulkJobFieldParams(options.ItemJobsFields))
+	}
+
+	if options.CatalogItemsFields != nil {
+		params = append(params, models.BuildCatalogItemFieldParams((options.CatalogItemsFields)))
+	}
+
+	if options.Include != nil {
+		var includedStr = make([]string, 0)
+
+		for _, inc := range options.Include {
+			includedStr = append(includedStr, string(inc))
+		}
+		params = append(params, fmt.Sprintf("include=%s", strings.Join(includedStr, ",")))
+	}
+
+	return strings.Join(params, "&")
+}
+
+func (api *catalogApi) GetCreateItemsJob(ctx context.Context, createBuildItemJobId string, options *GetBulkItemsJobOptions) (*models.CatalogItemBulkJobResource, error) {
+	queryParams := buildGetBulkItemsJobOptionsParams(options)
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-create-jobs/%s/?%s", api.baseApiUrl, createBuildItemJobId, queryParams)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var createBuildItemJob models.CatalogItemBulkJobResource
+	err = json.Unmarshal(byteData, &createBuildItemJob)
+
+	return &createBuildItemJob, nil
+}
+
+func (api *catalogApi) GetUpdateItemsJobs(ctx context.Context, options *GetBulkItemsJobsOptions) (*models.CatalogItemBulkJobCollectionResource, error) {
+	queryParams := buildGetBulkItemsJobsOptionsParams(options)
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-update-jobs/?%s", api.baseApiUrl, queryParams)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var itemJobs models.CatalogItemBulkJobCollectionResource
+	err = json.Unmarshal(byteData, &itemJobs)
+
+	return &itemJobs, nil
+}
+
+func (api *catalogApi) SpawnUpdateItemsJob(ctx context.Context, payload SpawnUpdateItemsJobPayload) (*models.CatalogItemBulkJobResource, error) {
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-update-jobs/", api.baseApiUrl)
+
+	reqData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	reqDataBuffer := bytes.NewBuffer(reqData)
+
+	req, err := http.NewRequest(http.MethodPost, url, reqDataBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var catalogItemResource models.CatalogItemBulkJobResource
+	err = json.Unmarshal(byteData, &catalogItemResource)
+
+	return &catalogItemResource, err
+}
+
+func (api *catalogApi) GetUpdateItemsJob(ctx context.Context, buildUpdateJobId string, options *GetBulkItemsJobOptions) (*models.CatalogItemBulkJobResource, error) {
+	queryParams := buildGetBulkItemsJobOptionsParams(options)
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-update-jobs/%s/?%s", api.baseApiUrl, buildUpdateJobId, queryParams)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var createBuildItemJob models.CatalogItemBulkJobResource
+	err = json.Unmarshal(byteData, &createBuildItemJob)
+
+	return &createBuildItemJob, nil
+}
+
+func (api *catalogApi) GetDeleteItemsJobs(ctx context.Context, options *GetBulkItemsJobsOptions) (*models.CatalogItemBulkJobCollectionResource, error) {
+	queryParams := buildGetBulkItemsJobsOptionsParams(options)
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-delete-jobs/?%s", api.baseApiUrl, queryParams)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var itemJobs models.CatalogItemBulkJobCollectionResource
+	err = json.Unmarshal(byteData, &itemJobs)
+
+	return &itemJobs, nil
+}
+
+func (api *catalogApi) SpawnDeleteItemsJob(ctx context.Context, payload SpawnDeleteItemsJobPayload) (*models.CatalogItemBulkJobResource, error) {
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-delete-jobs/", api.baseApiUrl)
+
+	reqData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	reqDataBuffer := bytes.NewBuffer(reqData)
+
+	req, err := http.NewRequest(http.MethodPost, url, reqDataBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var catalogItemResource models.CatalogItemBulkJobResource
+	err = json.Unmarshal(byteData, &catalogItemResource)
+
+	return &catalogItemResource, err
+}
+
+func (api *catalogApi) GetDeleteItemsJob(ctx context.Context, buildDeleteJobId string, options *GetBulkItemsJobOptions) (*models.CatalogItemBulkJobResource, error) {
+	queryParams := buildGetBulkItemsJobOptionsParams(options)
+	url := fmt.Sprintf("%s/api/catalog-item-bulk-delete-jobs/%s/?%s", api.baseApiUrl, buildDeleteJobId, queryParams)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	byteData, err := common.RetrieveData(api.httpClient, req, api.session, api.revision)
+	if err != nil {
+		return nil, err
+	}
+
+	var createBuildItemJob models.CatalogItemBulkJobResource
+	err = json.Unmarshal(byteData, &createBuildItemJob)
+
+	return &createBuildItemJob, nil
 }

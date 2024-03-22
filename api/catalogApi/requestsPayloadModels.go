@@ -100,3 +100,53 @@ type (
 		Categories models.RelationshipDataCollection //ID: A list of catalog category IDs representing the categories the item is in
 	}
 )
+
+type (
+	SpawnCreateItemsJobPayload struct {
+		Data SpawnCreateItemsJobPayloadData `json:"data"`
+	}
+
+	SpawnCreateItemsJobPayloadData struct {
+		Type       string                               `json:"type"` //catalog-item-bulk-create-job
+		Attributes SpawnCreateItemsJobPayloadAttributes `json:"attributes"`
+	}
+
+	SpawnCreateItemsJobPayloadAttributes struct {
+		Data []CreateCatalogItemPayload `json:"data"`
+	}
+)
+
+type (
+	SpawnUpdateItemsJobPayload struct {
+		Data SpawnUpdateItemsJobPayloadData `json:"data"`
+	}
+
+	SpawnUpdateItemsJobPayloadData struct {
+		Type       string                               `json:"type"` //catalog-item-bulk-update-job
+		Attributes SpawnUpdateItemsJobPayloadAttributes `json:"attributes"`
+	}
+
+	SpawnUpdateItemsJobPayloadAttributes struct {
+		Data []UpdateCatalogItemPayload `json:"data"`
+	}
+)
+
+type (
+	SpawnDeleteItemsJobPayload struct {
+		Data SpawnDeleteItemsJobPayloadData `json:"data"`
+	}
+
+	SpawnDeleteItemsJobPayloadData struct {
+		Type       string                               `json:"type"` //catalog-item-bulk-delete-job
+		Attributes SpawnDeleteItemsJobPayloadAttributes `json:"attributes"`
+	}
+
+	SpawnDeleteItemsJobPayloadAttributes struct {
+		Items []DeleteCatalogItemPayload `json:"items"`
+	}
+
+	DeleteCatalogItemPayload struct {
+		Type string `json:"type"` //catalog-item
+		ID   string `json:"id"`   //The catalog item ID is a compound ID (string), with format: {integration}:::{catalog}:::{external_id}. Currently, the only supported integration type is $custom, and the only supported catalog is $default.
+	}
+)
