@@ -30,7 +30,6 @@ func Retry(fn RetryableFunc, opt RetryOptions) (*http.Response, error) {
 	for retries := 0; retries < opt.MaxRetries; retries++ {
 		// Execute the provided function
 		resp, err = fn()
-
 		if err != nil {
 			return nil, err
 		}
