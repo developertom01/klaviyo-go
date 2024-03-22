@@ -10,10 +10,11 @@ type (
 	CreateCatalogItemPayloadData struct {
 		Type          string                                    `json:"type"` //catalog-item
 		Attributes    CreateCatalogItemAttributesPayload        `json:"attributes"`
-		Relationships CreateCatalogItemDataRelationshipsPayload `json:"relationships"`
+		Relationships CreateCatalogItemDataRelationshipsPayload `json:"relationships"` // Type = catalog-category
 	}
 
 	CreateCatalogItemDataRelationshipsPayload struct {
+		// Type = catalog-category
 		Categories models.RelationshipsCollectionRequestPayload `json:"categories"`
 	}
 
@@ -24,7 +25,7 @@ type (
 		Title             string          `json:"title"`                         //The title of the catalog item .
 		Description       string          `json:"description"`                   //A description of the catalog item .
 		Price             *int64          `json:"price,omitempty"`               //This field can be used to set the price on the catalog item , which is what gets displayed for the item  when included in emails. For most price-update use cases, you will also want to update the price on any parent items using the Update Catalog Item Endpoint.
-		Url               int64           `json:"url"`                           //URL pointing to the location of the catalog item  on your website.
+		Url               string          `json:"url"`                           //URL pointing to the location of the catalog item  on your website.
 		ImageFullUrl      *string         `json:"image_full_url,omitempty"`      // URL pointing to the location of a full image of the catalog item .
 		ImageThumbnailUrl *string         `json:"image_thumbnail_url,omitempty"` //URL pointing to the location of an image thumbnail of the catalog item
 		Images            []string        `json:"images,omitempty"`              //List of URLs pointing to the locations of images of the catalog item .
