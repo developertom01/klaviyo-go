@@ -30,7 +30,7 @@ type (
 
 func executeRequest(httpClient HTTPClient, req *http.Request, session Session, revision string) (*http.Response, error) {
 	req.Header.Add("revision", revision)
-	req.Header.Add("accept", "application/json")
+	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 	session.ApplyToRequest(session.GetOptions(), req)
 
@@ -87,6 +87,7 @@ func MakeMultipartRequest(ctx context.Context, requestOptions MultipartRequestOp
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, requestOptions.Url, &requestWriter)
 	req.Header.Add("revision", requestOptions.Revision)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	req.Header.Add("User-Agent", "Klaviyo-go-sdk-v0.0.0")
 
 	requestOptions.Session.ApplyToRequest(requestOptions.Session.GetOptions(), req)
 
