@@ -31,6 +31,7 @@ type (
 func executeRequest(httpClient HTTPClient, req *http.Request, session Session, revision string) (*http.Response, error) {
 	req.Header.Add("revision", revision)
 	req.Header.Add("accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
 	session.ApplyToRequest(session.GetOptions(), req)
 
 	execFn := func() (*http.Response, error) {
